@@ -90,6 +90,7 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
     var selectedCol by rememberSaveable { mutableStateOf<Int?>(null) }
     val headerColor = Color(0xFFEEEEEE)
     val highlightColor = Color.Yellow.copy(alpha = 0.4f)
+    val intersectionColor = Color.Green.copy(alpha = 0.4f)
 
     Column(modifier = modifier.padding(16.dp)) {
         // Header row for columns
@@ -160,7 +161,7 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
                     val selectionActive = selectedRow != null || selectedCol != null
 
                     val cellBackground = when {
-                        isSelected -> highlightColor.copy(alpha = 0.7f)
+                        isSelected -> intersectionColor
                         isInHighlightedArea -> highlightColor
                         else -> Color.Transparent
                     }
