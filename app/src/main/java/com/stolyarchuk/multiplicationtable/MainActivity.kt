@@ -7,31 +7,51 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.CalendarViewDay
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Quiz
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.stolyarchuk.multiplicationtable.ui.theme.MultiplicationTableTheme
+import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,8 +88,10 @@ fun MultiplicationTableApp() {
         }
     ) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            if (currentDestination == AppDestinations.TABLE) {
-                MultiplicationTableScreen(modifier = Modifier.padding(innerPadding))
+            when (currentDestination) {
+                AppDestinations.TABLE -> MultiplicationTableScreen(modifier = Modifier.padding(innerPadding))
+                AppDestinations.QUIZ -> QuizScreen(modifier = Modifier.padding(innerPadding))
+                AppDestinations.PROFILE -> {}
             }
         }
     }
@@ -80,7 +102,7 @@ enum class AppDestinations(
     val icon: ImageVector,
 ) {
     TABLE("Table", Icons.Default.CalendarViewDay),
-    FAVORITES("Favorites", Icons.Default.Favorite),
+    QUIZ("Quiz", Icons.Default.Quiz),
     PROFILE("Profile", Icons.Default.AccountBox),
 }
 
@@ -197,10 +219,88 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun QuizScreen(modifier: Modifier = Modifier) {
+    var number1 by rememberSaveable { mutableStateOf(Random.nextInt(1, 10)) }
+    var number2 by rememberSaveable { mutableStateOf(Random.nextInt(1, 10)) }
+    var userAnswer by rememberSaveable { mutableStateOf("") }
+    var resultState by rememberSaveable { mutableStateOf<Boolean?>(null) }
+    val focusRequester = remember { FocusRequester() }
+
+    fun newQuestion() {
+        number1 = Random.nextInt(1, 10)
+        number2 = Random.nextInt(1, 10)
+        userAnswer = ""
+        resultState = null
+    }
+
+    if (resultState == true) {
+        LaunchedEffect(resultState) {
+            kotlinx.coroutines.delay(1000)
+            newQuestion()
+        }
+    }
+
+    LaunchedEffect(number1, number2) {
+        focusRequester.requestFocus()
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(text = "$number1", fontSize = 48.sp, color = Color.Green, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.width(8.dp))
+            Icon(Icons.Default.Close, contentDescription = "Multiply", tint = Color.Green, modifier = Modifier.size(32.dp))
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "$number2", fontSize = 48.sp, color = Color.Green, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "=", fontSize = 32.sp)
+            Spacer(modifier = Modifier.width(8.dp))
+            TextField(
+                value = userAnswer,
+                onValueChange = { userAnswer = it.filter { char -> char.isDigit() } },
+                isError = resultState == false,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier
+                    .width(100.dp)
+                    .focusRequester(focusRequester)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(onClick = {
+                val correctAnswer = number1 * number2
+                resultState = userAnswer.toIntOrNull() == correctAnswer
+            }) {
+                Text("Check")
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        if (resultState != null) {
+            val color = if (resultState == true) Color.Green else Color.Red
+            Box(modifier = Modifier.size(50.dp).background(color, CircleShape))
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun MultiplicationTablePreview() {
     MultiplicationTableTheme {
         MultiplicationTableScreen()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuizScreenPreview() {
+    MultiplicationTableTheme {
+        QuizScreen()
     }
 }
