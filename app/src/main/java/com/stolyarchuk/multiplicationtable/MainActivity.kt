@@ -68,23 +68,35 @@ import kotlin.random.Random
 class QuizStatsManager(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("QuizStats", Context.MODE_PRIVATE)
 
-    companion object {
-        private const val CORRECT_ANSWERS = "correct_answers"
-        private const val INCORRECT_ANSWERS = "incorrect_answers"
+    private fun getKey(base: String, mode: String) = "${mode}_${base}"
+
+    fun incrementCorrect(mode: String, timeInMillis: Long) {
+        val key = getKey("correct_answers", mode)
+        val currentCorrect = prefs.getInt(key, 0)
+        prefs.edit().putInt(key, currentCorrect + 1).apply()
+        addAnswerTime(mode, timeInMillis)
     }
 
-    fun incrementCorrect() {
-        val currentCorrect = prefs.getInt(CORRECT_ANSWERS, 0)
-        prefs.edit().putInt(CORRECT_ANSWERS, currentCorrect + 1).apply()
+    fun incrementIncorrect(mode: String, timeInMillis: Long) {
+        val key = getKey("incorrect_answers", mode)
+        val currentIncorrect = prefs.getInt(key, 0)
+        prefs.edit().putInt(key, currentIncorrect + 1).apply()
+        addAnswerTime(mode, timeInMillis)
     }
 
-    fun incrementIncorrect() {
-        val currentIncorrect = prefs.getInt(INCORRECT_ANSWERS, 0)
-        prefs.edit().putInt(INCORRECT_ANSWERS, currentIncorrect + 1).apply()
+    private fun addAnswerTime(mode: String, timeInMillis: Long) {
+        val timeKey = getKey("total_time_ms", mode)
+        val answersKey = getKey("total_answers", mode)
+        val totalTime = prefs.getLong(timeKey, 0L)
+        val totalAnswers = prefs.getInt(answersKey, 0)
+        prefs.edit()
+            .putLong(timeKey, totalTime + timeInMillis)
+            .putInt(answersKey, totalAnswers + 1)
+            .apply()
     }
 
     fun resetScores() {
-        prefs.edit().putInt(CORRECT_ANSWERS, 0).putInt(INCORRECT_ANSWERS, 0).apply()
+        prefs.edit().clear().apply()
     }
 }
 
@@ -265,11 +277,13 @@ fun QuizScreen(modifier: Modifier = Modifier, onNavigateToTable: () -> Unit) {
     var resultState by rememberSaveable { mutableStateOf<Boolean?>(null) }
     val focusRequester = remember { FocusRequester() }
     var showResetDialog by remember { mutableStateOf(false) }
-
     val context = LocalContext.current
     val statsManager = remember { QuizStatsManager(context) }
     var sessionCorrectAnswers by rememberSaveable { mutableStateOf(0) }
     var sessionIncorrectAnswers by rememberSaveable { mutableStateOf(0) }
+    var sessionTotalTime by rememberSaveable { mutableStateOf(0L) }
+    var sessionAnswerCount by rememberSaveable { mutableStateOf(0) }
+    var questionStartTime by remember { mutableStateOf(System.currentTimeMillis()) }
 
     var isSelectionMode by rememberSaveable { mutableStateOf(false) }
     var answerOptions by remember { mutableStateOf<List<Int>>(emptyList()) }
@@ -285,6 +299,7 @@ fun QuizScreen(modifier: Modifier = Modifier, onNavigateToTable: () -> Unit) {
         resultState = null
         selectionResults = emptyMap()
         firstAttemptMade = false
+        questionStartTime = System.currentTimeMillis()
     }
 
     LaunchedEffect(correctAnswer) {
@@ -309,6 +324,7 @@ fun QuizScreen(modifier: Modifier = Modifier, onNavigateToTable: () -> Unit) {
         if (!isSelectionMode) {
             focusRequester.requestFocus()
         }
+        questionStartTime = System.currentTimeMillis()
     }
 
     Box(modifier = modifier.fillMaxSize().padding(16.dp)) {
@@ -326,17 +342,21 @@ fun QuizScreen(modifier: Modifier = Modifier, onNavigateToTable: () -> Unit) {
                     Icon(Icons.Default.CalendarViewDay, contentDescription = "Back to Table")
                 }
                 Row {
-                    Text(text = "Correct: ", color = Color.Green, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "$sessionCorrectAnswers", color = Color.Green, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "Correct: ", color = Color.Green, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "$sessionCorrectAnswers", color = Color.Green, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 Row {
-                    Text(text = "Wrong: ", color = Color.Red, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "$sessionIncorrectAnswers", color = Color.Red, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "Wrong: ", color = Color.Red, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "$sessionIncorrectAnswers", color = Color.Red, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 IconButton(onClick = { showResetDialog = true }, modifier = Modifier.border(2.dp, Color.Gray, CircleShape)) {
                     Icon(Icons.Default.Refresh, contentDescription = "Reset Global Stats")
                 }
             }
+            Spacer(modifier = Modifier.height(8.dp))
+            val avgTime = if (sessionAnswerCount > 0) sessionTotalTime.toFloat() / sessionAnswerCount / 1000f else 0f
+            Text("Average Response Time: %.1fs".format(avgTime), color = Color.Blue, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+
             Spacer(modifier = Modifier.height(8.dp))
             TextButton(
                 onClick = { isSelectionMode = !isSelectionMode },
@@ -357,6 +377,8 @@ fun QuizScreen(modifier: Modifier = Modifier, onNavigateToTable: () -> Unit) {
                             statsManager.resetScores()
                             sessionCorrectAnswers = 0
                             sessionIncorrectAnswers = 0
+                            sessionTotalTime = 0L
+                            sessionAnswerCount = 0
                             showResetDialog = false
                         }
                     ) {
@@ -407,11 +429,14 @@ fun QuizScreen(modifier: Modifier = Modifier, onNavigateToTable: () -> Unit) {
                                     Button(
                                         onClick = {
                                             if (!firstAttemptMade) {
+                                                val timeTaken = System.currentTimeMillis() - questionStartTime
+                                                sessionTotalTime += timeTaken
+                                                sessionAnswerCount++
                                                 if (isCorrect) {
-                                                    statsManager.incrementCorrect()
+                                                    statsManager.incrementCorrect("selection", timeTaken)
                                                     sessionCorrectAnswers++
                                                 } else {
-                                                    statsManager.incrementIncorrect()
+                                                    statsManager.incrementIncorrect("selection", timeTaken)
                                                     sessionIncorrectAnswers++
                                                 }
                                                 firstAttemptMade = true
@@ -454,13 +479,16 @@ fun QuizScreen(modifier: Modifier = Modifier, onNavigateToTable: () -> Unit) {
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Button(onClick = {
+                            val timeTaken = System.currentTimeMillis() - questionStartTime
                             val isCorrect = userAnswer.toIntOrNull() == correctAnswer
                             resultState = isCorrect
+                            sessionTotalTime += timeTaken
+                            sessionAnswerCount++
                             if (isCorrect) {
-                                statsManager.incrementCorrect()
+                                statsManager.incrementCorrect("input", timeTaken)
                                 sessionCorrectAnswers++
                             } else {
-                                statsManager.incrementIncorrect()
+                                statsManager.incrementIncorrect("input", timeTaken)
                                 sessionIncorrectAnswers++
                             }
                         }) {
