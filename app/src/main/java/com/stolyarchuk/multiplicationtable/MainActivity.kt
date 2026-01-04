@@ -100,6 +100,10 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
                     .background(headerColor)
                     .border(1.dp, Color.Gray)
                     .padding(4.dp)
+                    .clickable {
+                        selectedRow = null
+                        selectedCol = null
+                    }
             ) // Empty top-left cell
             for (j in 1..9) {
                 val background = if (j == selectedCol) highlightColor else headerColor
@@ -109,7 +113,18 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
                         .weight(1f)
                         .background(background)
                         .border(1.dp, Color.Gray)
-                        .padding(4.dp),
+                        .padding(4.dp)
+                        .clickable {
+                            if (selectedCol == j) {
+                                if (selectedRow != null) {
+                                    selectedRow = null // collapse cell to col
+                                } else {
+                                    selectedCol = null // toggle col off
+                                }
+                            } else {
+                                selectedCol = j // select new col
+                            }
+                        },
                     textAlign = TextAlign.Center
                 )
             }
@@ -125,12 +140,24 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
                         .weight(1f)
                         .background(background)
                         .border(1.dp, Color.Gray)
-                        .padding(4.dp),
+                        .padding(4.dp)
+                        .clickable {
+                            if (selectedRow == i) {
+                                if (selectedCol != null) {
+                                    selectedCol = null // collapse cell to row
+                                } else {
+                                    selectedRow = null // toggle row off
+                                }
+                            } else {
+                                selectedRow = i // select new row
+                            }
+                        },
                     textAlign = TextAlign.Center
                 )
                 for (j in 1..9) {
                     val isSelected = i == selectedRow && j == selectedCol
                     val isInHighlightedArea = i == selectedRow || j == selectedCol
+                    val selectionActive = selectedRow != null || selectedCol != null
 
                     val cellBackground = when {
                         isSelected -> highlightColor.copy(alpha = 0.7f)
@@ -138,7 +165,7 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
                         else -> Color.Transparent
                     }
 
-                    val textColor = if (selectedRow != null && !isInHighlightedArea) {
+                    val textColor = if (selectionActive && !isInHighlightedArea) {
                         Color.LightGray
                     } else {
                         Color.Unspecified
