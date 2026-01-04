@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +44,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -264,6 +266,14 @@ fun QuizScreen(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = "=", fontSize = 32.sp)
             Spacer(modifier = Modifier.width(8.dp))
+            val textFieldColors = if (resultState == true) {
+                TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Green.copy(alpha = 0.2f),
+                    unfocusedContainerColor = Color.Green.copy(alpha = 0.2f),
+                )
+            } else {
+                TextFieldDefaults.colors()
+            }
             TextField(
                 value = userAnswer,
                 onValueChange = { userAnswer = it.filter { char -> char.isDigit() } },
@@ -271,7 +281,9 @@ fun QuizScreen(modifier: Modifier = Modifier) {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .width(100.dp)
-                    .focusRequester(focusRequester)
+                    .focusRequester(focusRequester),
+                textStyle = TextStyle(fontSize = 32.sp, textAlign = TextAlign.Center),
+                colors = textFieldColors
             )
             Spacer(modifier = Modifier.width(8.dp))
             Button(onClick = {
