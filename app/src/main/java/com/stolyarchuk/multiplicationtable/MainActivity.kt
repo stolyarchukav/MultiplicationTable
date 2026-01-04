@@ -36,6 +36,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -311,26 +312,37 @@ fun QuizScreen(modifier: Modifier = Modifier, onNavigateToTable: () -> Unit) {
     }
 
     Box(modifier = modifier.fillMaxSize().padding(16.dp)) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.TopCenter),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            IconButton(onClick = onNavigateToTable, modifier = Modifier.border(2.dp, Color.Gray, CircleShape)) {
-                Icon(Icons.Default.CalendarViewDay, contentDescription = "Back to Table")
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onNavigateToTable, modifier = Modifier.border(2.dp, Color.Gray, CircleShape)) {
+                    Icon(Icons.Default.CalendarViewDay, contentDescription = "Back to Table")
+                }
+                Row {
+                    Text(text = "Correct: ", color = Color.Green, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "$sessionCorrectAnswers", color = Color.Green, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                }
+                Row {
+                    Text(text = "Wrong: ", color = Color.Red, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "$sessionIncorrectAnswers", color = Color.Red, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                }
+                IconButton(onClick = { showResetDialog = true }, modifier = Modifier.border(2.dp, Color.Gray, CircleShape)) {
+                    Icon(Icons.Default.Refresh, contentDescription = "Reset Global Stats")
+                }
             }
-            Row {
-                Text(text = "Correct: ", color = Color.Green, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                Text(text = "$sessionCorrectAnswers", color = Color.Green, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            }
-            Row {
-                Text(text = "Wrong: ", color = Color.Red, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                Text(text = "$sessionIncorrectAnswers", color = Color.Red, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            }
-            IconButton(onClick = { showResetDialog = true }, modifier = Modifier.border(2.dp, Color.Gray, CircleShape)) {
-                Icon(Icons.Default.Refresh, contentDescription = "Reset Global Stats")
+            Spacer(modifier = Modifier.height(8.dp))
+            TextButton(
+                onClick = { isSelectionMode = !isSelectionMode },
+                modifier = Modifier.border(2.dp, Color.Gray, ButtonDefaults.shape)
+            ) {
+                Text(if (isSelectionMode) "Switch to Input Mode" else "Switch to Selection Mode")
             }
         }
 
@@ -366,11 +378,6 @@ fun QuizScreen(modifier: Modifier = Modifier, onNavigateToTable: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Button(onClick = { isSelectionMode = !isSelectionMode }) {
-                Text(if (isSelectionMode) "Switch to Input Mode" else "Switch to Selection Mode")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-
             if (isSelectionMode) {
                  Column(horizontalAlignment = Alignment.CenterHorizontally){
                     Row(
