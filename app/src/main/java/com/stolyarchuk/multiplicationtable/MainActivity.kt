@@ -190,6 +190,7 @@ fun MultiplicationTableApp() {
                 AppDestinations.QUIZ -> QuizScreen(
                     modifier = Modifier.padding(innerPadding),
                     onNavigateToTable = { currentDestination = AppDestinations.TABLE },
+                    onNavigateToStats = { currentDestination = AppDestinations.STATISTICS },
                     statsManager = statsManager
                 )
                 AppDestinations.STATISTICS -> StatisticsScreen(
@@ -327,6 +328,7 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
 fun QuizScreen(
     modifier: Modifier = Modifier, 
     onNavigateToTable: () -> Unit,
+    onNavigateToStats: () -> Unit,
     statsManager: QuizStatsManager
 ) {
     var number1 by rememberSaveable { mutableStateOf(Random.nextInt(1, 10)) }
@@ -334,7 +336,6 @@ fun QuizScreen(
     var userAnswer by rememberSaveable { mutableStateOf("") }
     var resultState by rememberSaveable { mutableStateOf<Boolean?>(null) }
     val focusRequester = remember { FocusRequester() }
-    var showResetDialog by remember { mutableStateOf(false) }
     var sessionCorrectAnswers by rememberSaveable { mutableStateOf(0) }
     var sessionIncorrectAnswers by rememberSaveable { mutableStateOf(0) }
     var sessionTotalTime by rememberSaveable { mutableStateOf(0L) }
@@ -405,13 +406,13 @@ fun QuizScreen(
                     Text(text = "Wrong: ", color = Color.Red, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                     Text(text = "$sessionIncorrectAnswers", color = Color.Red, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
-                IconButton(onClick = { showResetDialog = true }, modifier = Modifier.border(2.dp, Color.Gray, CircleShape)) {
-                    Icon(Icons.Default.Refresh, contentDescription = "Reset Global Stats")
+                IconButton(onClick = onNavigateToStats, modifier = Modifier.border(2.dp, Color.Gray, CircleShape)) {
+                    Icon(Icons.Default.Equalizer, contentDescription = "Go to Statistics")
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
             val avgTime = if (sessionAnswerCount > 0) sessionTotalTime.toFloat() / sessionAnswerCount / 1000f else 0f
-            Text("Average Response Time: %.1fs".format(avgTime), color = Color.Blue, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text("Average Answer Time: %.1fs".format(avgTime), color = Color.Blue, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
             Spacer(modifier = Modifier.height(8.dp))
             TextButton(
@@ -420,35 +421,6 @@ fun QuizScreen(
             ) {
                 Text(if (isSelectionMode) "Switch to Input Mode" else "Switch to Selection Mode")
             }
-        }
-
-        if (showResetDialog) {
-            AlertDialog(
-                onDismissRequest = { showResetDialog = false },
-                title = { Text(text = "Confirm Reset") },
-                text = { Text("Are you sure you want to reset the global statistics?") },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            statsManager.resetScores()
-                            sessionCorrectAnswers = 0
-                            sessionIncorrectAnswers = 0
-                            sessionTotalTime = 0L
-                            sessionAnswerCount = 0
-                            showResetDialog = false
-                        }
-                    ) {
-                        Text("Yes")
-                    }
-                },
-                dismissButton = {
-                    Button(
-                        onClick = { showResetDialog = false }
-                    ) {
-                        Text("No")
-                    }
-                }
-            )
         }
 
         Column(
@@ -565,12 +537,14 @@ fun QuizScreen(
 @Composable
 fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManager) {
     var showDailyGraph by remember { mutableStateOf(false) }
+    var refreshKey by remember { mutableStateOf(0) }
+    var showResetDialog by remember { mutableStateOf(false) }
 
-    val inputGlobalStats = remember { statsManager.getStats("input", "global") }
-    val selectionGlobalStats = remember { statsManager.getStats("selection", "global") }
+    val inputGlobalStats = remember(refreshKey) { statsManager.getStats("input", "global") }
+    val selectionGlobalStats = remember(refreshKey) { statsManager.getStats("selection", "global") }
 
-    val dailyInputStats = remember { statsManager.getDailyStatsForMode("input") }
-    val dailySelectionStats = remember { statsManager.getDailyStatsForMode("selection") }
+    val dailyInputStats = remember(refreshKey) { statsManager.getDailyStatsForMode("input") }
+    val dailySelectionStats = remember(refreshKey) { statsManager.getDailyStatsForMode("selection") }
 
 
     Column(
@@ -586,11 +560,42 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text("Statistics", fontSize = 28.sp, fontWeight = FontWeight.Bold)
-            IconButton(onClick = { showDailyGraph = !showDailyGraph }) {
-                Icon(Icons.Default.Equalizer, contentDescription = "Toggle View")
+            Row {
+                IconButton(onClick = { showDailyGraph = !showDailyGraph }) {
+                    Icon(Icons.Default.Equalizer, contentDescription = "Toggle View")
+                }
+                IconButton(onClick = { showResetDialog = true }) {
+                    Icon(Icons.Default.Refresh, contentDescription = "Reset Stats")
+                }
             }
         }
         
+        if (showResetDialog) {
+            AlertDialog(
+                onDismissRequest = { showResetDialog = false },
+                title = { Text(text = "Confirm Reset") },
+                text = { Text("Are you sure you want to reset all statistics?") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            statsManager.resetScores()
+                            refreshKey++
+                            showResetDialog = false
+                        }
+                    ) {
+                        Text("Yes")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = { showResetDialog = false }
+                    ) {
+                        Text("No")
+                    }
+                }
+            )
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         if (showDailyGraph) {
@@ -600,7 +605,7 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
                     title = "Correct vs Wrong Answers",
                     data = dailyInputStats
                 )
-                StatsBarChart(title = "Average Response Time, sec", data = dailyInputStats.mapValues { it.value.avgTime }, color = Color.Blue)
+                StatsBarChart(title = "Average Answer Time, sec", data = dailyInputStats.mapValues { it.value.avgTime }, color = Color.Blue)
                 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -609,7 +614,7 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
                     title = "Correct vs Wrong Answers",
                     data = dailySelectionStats
                 )
-                StatsBarChart(title = "Average Response Time, sec", data = dailySelectionStats.mapValues { it.value.avgTime }, color = Color.Blue)
+                StatsBarChart(title = "Average Answer Time, sec", data = dailySelectionStats.mapValues { it.value.avgTime }, color = Color.Blue)
             }
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -643,7 +648,7 @@ fun StatsTable(title: String, stats: Stats) {
             Text("${stats.incorrect}", color = Color.Red)
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Average Response Time:")
+            Text("Average Answer Time:")
             Text("%.1fs".format(stats.avgTime), color = Color.Blue)
         }
     }
@@ -750,7 +755,7 @@ fun StatsBarChart(title: String, data: Map<String, Float>, color: Color) {
                                 modifier = Modifier
                                     .width(15.dp)
                                     .fillMaxHeight(value / maxValue)
-                                    .background(Color.Red)
+                                    .background(Color.Blue)
                             )
                         }
                     }
@@ -773,7 +778,7 @@ fun MultiplicationTablePreview() {
 @Composable
 fun QuizScreenPreview() {
     MultiplicationTableTheme {
-        QuizScreen(onNavigateToTable = {}, statsManager = QuizStatsManager(LocalContext.current))
+        QuizScreen(onNavigateToTable = {}, onNavigateToStats = {}, statsManager = QuizStatsManager(LocalContext.current))
     }
 }
 
