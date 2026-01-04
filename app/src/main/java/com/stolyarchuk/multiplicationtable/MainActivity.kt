@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BorderAll
 import androidx.compose.material.icons.filled.CalendarViewDay
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Equalizer
@@ -204,7 +205,7 @@ enum class AppDestinations(
     val label: String,
     val icon: ImageVector,
 ) {
-    TABLE("Table", Icons.Default.CalendarViewDay),
+    TABLE("Table", Icons.Default.BorderAll),
     QUIZ("Quiz", Icons.Default.Quiz),
     STATISTICS("Statistics", Icons.Default.Equalizer),
 }
@@ -394,7 +395,7 @@ fun QuizScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onNavigateToTable, modifier = Modifier.border(2.dp, Color.Gray, CircleShape)) {
-                    Icon(Icons.Default.CalendarViewDay, contentDescription = "Back to Table")
+                    Icon(Icons.Default.BorderAll, contentDescription = "Back to Table")
                 }
                 Row {
                     Text(text = "Correct: ", color = Color.Green, fontSize = 20.sp, fontWeight = FontWeight.Bold)
