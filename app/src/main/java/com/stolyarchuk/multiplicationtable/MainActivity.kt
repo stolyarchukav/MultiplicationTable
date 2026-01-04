@@ -94,7 +94,7 @@ class QuizStatsManager(context: Context) {
 
     fun getDailyStatsForMode(mode: String): Map<String, Stats> {
         val dates = prefs.getStringSet(DATES_SET, emptySet()) ?: emptySet()
-        return dates.associateWith { date -> getStats(mode, date) }
+        return dates.associateWith { date -> getStats(mode, date) }.toSortedMap()
     }
 
     private fun _increment(scope: String, mode: String, isCorrect: Boolean, timeInMillis: Long) {
@@ -597,20 +597,18 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
                 Text("Daily Input Mode", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
                 CombinedStatsBarChart(
                     title = "Correct vs Wrong Answers",
-                    correctData = dailyInputStats.mapValues { it.value.correct.toFloat() },
-                    wrongData = dailyInputStats.mapValues { it.value.incorrect.toFloat() }
+                    data = dailyInputStats
                 )
-                StatsBarChart(title = "Average Response Time", data = dailyInputStats.mapValues { it.value.avgTime }, color = Color.Blue)
+                StatsBarChart(title = "Average Response Time, sec", data = dailyInputStats.mapValues { it.value.avgTime }, color = Color.Blue)
                 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text("Daily Selection Mode", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
                 CombinedStatsBarChart(
                     title = "Correct vs Wrong Answers",
-                    correctData = dailySelectionStats.mapValues { it.value.correct.toFloat() },
-                    wrongData = dailySelectionStats.mapValues { it.value.incorrect.toFloat() }
+                    data = dailySelectionStats
                 )
-                StatsBarChart(title = "Average Response Time", data = dailySelectionStats.mapValues { it.value.avgTime }, color = Color.Blue)
+                StatsBarChart(title = "Average Response Time, sec", data = dailySelectionStats.mapValues { it.value.avgTime }, color = Color.Blue)
             }
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -651,16 +649,17 @@ fun StatsTable(title: String, stats: Stats) {
 }
 
 @Composable
-fun CombinedStatsBarChart(title: String, correctData: Map<String, Float>, wrongData: Map<String, Float>) {
-    val allDates = (correctData.keys + wrongData.keys).sorted().distinct()
+fun CombinedStatsBarChart(title: String, data: Map<String, Stats>) {
+    val allDates = data.keys.sorted()
     if (allDates.isEmpty()) {
         Text("$title: No data yet")
         return
     }
 
-    val maxCorrect = correctData.values.maxOrNull() ?: 0f
-    val maxWrong = wrongData.values.maxOrNull() ?: 0f
+    val maxCorrect = data.values.maxOfOrNull { it.correct }?.toFloat() ?: 0f
+    val maxWrong = data.values.maxOfOrNull { it.incorrect }?.toFloat() ?: 0f
     val maxValue = maxOf(maxCorrect, maxWrong).takeIf { it > 0f } ?: 1f
+    val barChartHeight = 150.dp
 
     Column(modifier = Modifier.border(1.dp, Color.Gray).padding(8.dp).fillMaxWidth()) {
         Text(title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
@@ -668,23 +667,26 @@ fun CombinedStatsBarChart(title: String, correctData: Map<String, Float>, wrongD
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(150.dp),
+                .height(barChartHeight + 30.dp), // Total height for bars and labels
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Bottom
         ) {
             allDates.forEach { date ->
-                val correctValue = correctData[date] ?: 0f
-                val wrongValue = wrongData[date] ?: 0f
+                val stats = data[date]!!
+                val correctValue = stats.correct.toFloat()
+                val wrongValue = stats.incorrect.toFloat()
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom,
                     modifier = Modifier.weight(1f)
                 ) {
                     Row(
                         verticalAlignment = Alignment.Bottom,
-                        horizontalArrangement = Arrangement.spacedBy(2.dp)
+                        horizontalArrangement = Arrangement.spacedBy(2.dp),
+                        modifier = Modifier.height(barChartHeight)
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
                             Text("%.0f".format(correctValue), fontSize = 10.sp)
                             Box(
                                 modifier = Modifier
@@ -693,7 +695,7 @@ fun CombinedStatsBarChart(title: String, correctData: Map<String, Float>, wrongD
                                     .background(Color.Green)
                             )
                         }
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
                             Text("%.0f".format(wrongValue), fontSize = 10.sp)
                             Box(
                                 modifier = Modifier
@@ -703,7 +705,7 @@ fun CombinedStatsBarChart(title: String, correctData: Map<String, Float>, wrongD
                             )
                         }
                     }
-                    Text(date.substring(5), fontSize = 12.sp)
+                    Text(date.substring(5).replace("-","/"), fontSize = 12.sp)
                 }
             }
         }
@@ -719,28 +721,39 @@ fun StatsBarChart(title: String, data: Map<String, Float>, color: Color) {
     }
     
     val maxValue = data.values.maxOrNull() ?: 1f
+    val barChartHeight = 150.dp
 
     Column(modifier = Modifier.border(1.dp, Color.Gray).padding(8.dp).fillMaxWidth()) {
         Text(title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
         Spacer(modifier = Modifier.height(8.dp))
         Row(
-            modifier = Modifier.fillMaxWidth().height(150.dp),
+            modifier = Modifier.fillMaxWidth().height(barChartHeight + 30.dp), // Total height for bars and labels
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Bottom
         ) {
-            data.forEach { (date, value) ->
+            data.keys.sorted().forEach { date ->
+                val value = data[date] ?: 0f
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("%.1f".format(value), fontSize = 12.sp)
-                    Box(
-                        modifier = Modifier
-                            .width(30.dp)
-                            .fillMaxHeight(if (maxValue > 0) value / maxValue else 0f)
-                            .background(color)
-                    )
-                    Text(date.substring(5), fontSize = 12.sp) 
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(2.dp),
+                        modifier = Modifier.height(barChartHeight)
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
+                            Text("%.1f".format(value), fontSize = 12.sp)
+                            Box(
+                                modifier = Modifier
+                                    .width(15.dp)
+                                    .fillMaxHeight(value / maxValue)
+                                    .background(Color.Red)
+                            )
+                        }
+                    }
+                    Text(date.substring(5).replace("-","/"), fontSize = 12.sp)
                 }
             }
         }
