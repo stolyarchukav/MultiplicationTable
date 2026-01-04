@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Multiplication Table</string>
+    <string name="multiplication_table_title">Multiplication Table</string>
 </resources>

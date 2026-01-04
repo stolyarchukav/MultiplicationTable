@@ -58,6 +58,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -220,6 +221,13 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
     val intersectionColor = Color.Green.copy(alpha = 0.4f)
 
     Column(modifier = modifier.padding(16.dp)) {
+        Text(
+            text = stringResource(id = R.string.multiplication_table_title),
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 16.dp)
+        )
+
         // Header row for columns
         Row {
             Text(
