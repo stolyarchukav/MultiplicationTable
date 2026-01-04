@@ -28,7 +28,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BorderAll
-import androidx.compose.material.icons.filled.CalendarViewDay
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Equalizer
 import androidx.compose.material.icons.filled.Quiz
@@ -120,7 +119,7 @@ class QuizStatsManager(context: Context) {
             .putInt(answersKey, totalAnswers + 1)
             .apply()
     }
-    
+
     private fun addDate(date: String) {
         val dates = prefs.getStringSet(DATES_SET, mutableSetOf()) ?: mutableSetOf()
         if (date !in dates) {
@@ -175,10 +174,10 @@ fun MultiplicationTableApp() {
                     icon = {
                         Icon(
                             it.icon,
-                            contentDescription = it.label
+                            contentDescription = stringResource(it.label)
                         )
                     },
-                    label = { Text(it.label) },
+                    label = { Text(stringResource(it.label)) },
                     selected = it == currentDestination,
                     onClick = { currentDestination = it }
                 )
@@ -204,12 +203,12 @@ fun MultiplicationTableApp() {
 }
 
 enum class AppDestinations(
-    val label: String,
+    val label: Int,
     val icon: ImageVector,
 ) {
-    TABLE("Table", Icons.Default.BorderAll),
-    QUIZ("Quiz", Icons.Default.Quiz),
-    STATISTICS("Statistics", Icons.Default.Equalizer),
+    TABLE(R.string.table, Icons.Default.BorderAll),
+    QUIZ(R.string.quiz, Icons.Default.Quiz),
+    STATISTICS(R.string.statistics, Icons.Default.Equalizer),
 }
 
 @Composable
@@ -346,7 +345,7 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     Icons.Default.Close,
-                    contentDescription = "Multiply",
+                    contentDescription = stringResource(R.string.multiply),
                     tint = Color.Blue,
                     modifier = Modifier.size(32.dp)
                 )
@@ -359,7 +358,7 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = " = ${selectedRow!! * selectedCol!!}",
+                    text = stringResource(R.string.equals_sign) + (selectedRow!! * selectedCol!!),
                     color = Color.Green,
                     fontSize = 48.sp
                 )
@@ -372,7 +371,7 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Click the table cell",
+                    text = stringResource(R.string.click_the_table_cell),
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Normal
                 )
@@ -383,7 +382,7 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun QuizScreen(
-    modifier: Modifier = Modifier, 
+    modifier: Modifier = Modifier,
     onNavigateToTable: () -> Unit,
     onNavigateToStats: () -> Unit,
     statsManager: QuizStatsManager
@@ -453,30 +452,30 @@ fun QuizScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onNavigateToTable, modifier = Modifier.border(2.dp, Color.Gray, CircleShape)) {
-                    Icon(Icons.Default.BorderAll, contentDescription = "Back to Table")
+                    Icon(Icons.Default.BorderAll, contentDescription = stringResource(R.string.back_to_table))
                 }
                 Row {
-                    Text(text = "Correct: ", color = Color.Green, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text(text = stringResource(R.string.correct), color = Color.Green, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                     Text(text = "$sessionCorrectAnswers", color = Color.Green, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 Row {
-                    Text(text = "Wrong: ", color = Color.Red, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text(text = stringResource(R.string.wrong), color = Color.Red, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                     Text(text = "$sessionIncorrectAnswers", color = Color.Red, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 IconButton(onClick = onNavigateToStats, modifier = Modifier.border(2.dp, Color.Gray, CircleShape)) {
-                    Icon(Icons.Default.Equalizer, contentDescription = "Go to Statistics")
+                    Icon(Icons.Default.Equalizer, contentDescription = stringResource(R.string.go_to_statistics))
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
             val avgTime = if (sessionAnswerCount > 0) sessionTotalTime.toFloat() / sessionAnswerCount / 1000f else 0f
-            Text("Average Answer Time: %.1fs".format(avgTime), color = Color.Blue, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.average_answer_time_formatted, avgTime), color = Color.Blue, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
             Spacer(modifier = Modifier.height(8.dp))
             TextButton(
                 onClick = { isSelectionMode = !isSelectionMode },
                 modifier = Modifier.border(2.dp, Color.Gray, ButtonDefaults.shape)
             ) {
-                Text(if (isSelectionMode) "Switch to Input Mode" else "Switch to Selection Mode")
+                Text(if (isSelectionMode) stringResource(R.string.switch_to_input_mode) else stringResource(R.string.switch_to_selection_mode))
             }
         }
 
@@ -486,18 +485,18 @@ fun QuizScreen(
             verticalArrangement = Arrangement.Center
         ) {
             if (isSelectionMode) {
-                 Column(horizontalAlignment = Alignment.CenterHorizontally){
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(text = "$number1", fontSize = 48.sp, color = Color.Green, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Icon(Icons.Default.Close, contentDescription = "Multiply", tint = Color.Green, modifier = Modifier.size(32.dp))
+                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.multiply), tint = Color.Green, modifier = Modifier.size(32.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(text = "$number2", fontSize = 48.sp, color = Color.Green, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = " = ?", fontSize = 32.sp)
+                        Text(text = stringResource(R.string.equals_question), fontSize = 32.sp)
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -510,7 +509,7 @@ fun QuizScreen(
                                         false -> ButtonDefaults.buttonColors(containerColor = Color.Red)
                                         null -> ButtonDefaults.buttonColors()
                                     }
-    
+
                                     Button(
                                         onClick = {
                                             if (!firstAttemptMade) {
@@ -547,10 +546,10 @@ fun QuizScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(text = "$number1", fontSize = 48.sp, color = Color.Green, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Icon(Icons.Default.Close, contentDescription = "Multiply", tint = Color.Green, modifier = Modifier.size(32.dp))
+                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.multiply), tint = Color.Green, modifier = Modifier.size(32.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(text = "$number2", fontSize = 48.sp, color = Color.Green, fontWeight = FontWeight.Bold)
-                        Text(text = " = ", fontSize = 32.sp)
+                        Text(text = stringResource(R.string.equals_sign), fontSize = 32.sp)
                         TextField(
                             value = userAnswer,
                             onValueChange = { userAnswer = it.filter { char -> char.isDigit() } },
@@ -577,7 +576,7 @@ fun QuizScreen(
                                 sessionIncorrectAnswers++
                             }
                         }) {
-                            Text("Check")
+                            Text(stringResource(R.string.check))
                         }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
@@ -616,22 +615,22 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Statistics", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.statistics), fontSize = 28.sp, fontWeight = FontWeight.Bold)
             Row {
                 IconButton(onClick = { showDailyGraph = !showDailyGraph }) {
-                    Icon(Icons.Default.Equalizer, contentDescription = "Toggle View")
+                    Icon(Icons.Default.Equalizer, contentDescription = stringResource(R.string.toggle_view))
                 }
                 IconButton(onClick = { showResetDialog = true }) {
-                    Icon(Icons.Default.Refresh, contentDescription = "Reset Stats")
+                    Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.reset_stats))
                 }
             }
         }
-        
+
         if (showResetDialog) {
             AlertDialog(
                 onDismissRequest = { showResetDialog = false },
-                title = { Text(text = "Confirm Reset") },
-                text = { Text("Are you sure you want to reset all statistics?") },
+                title = { Text(text = stringResource(R.string.confirm_reset)) },
+                text = { Text(stringResource(R.string.are_you_sure_reset)) },
                 confirmButton = {
                     Button(
                         onClick = {
@@ -640,14 +639,14 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
                             showResetDialog = false
                         }
                     ) {
-                        Text("Yes")
+                        Text(stringResource(R.string.yes))
                     }
                 },
                 dismissButton = {
                     Button(
                         onClick = { showResetDialog = false }
                     ) {
-                        Text("No")
+                        Text(stringResource(R.string.no))
                     }
                 }
             )
@@ -657,34 +656,34 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
 
         if (showDailyGraph) {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text("Daily Input Mode", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.daily_input_mode), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
                 CombinedStatsBarChart(
-                    title = "Correct vs Wrong Answers",
+                    title = stringResource(R.string.correct_vs_wrong_answers),
                     data = dailyInputStats
                 )
-                StatsBarChart(title = "Average Answer Time, sec", data = dailyInputStats.mapValues { it.value.avgTime }, color = Color.Blue)
-                
+                StatsBarChart(title = stringResource(R.string.average_answer_time_sec), data = dailyInputStats.mapValues { it.value.avgTime }, color = Color.Blue)
+
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text("Daily Selection Mode", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.daily_selection_mode), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
                 CombinedStatsBarChart(
-                    title = "Correct vs Wrong Answers",
+                    title = stringResource(R.string.correct_vs_wrong_answers),
                     data = dailySelectionStats
                 )
-                StatsBarChart(title = "Average Answer Time, sec", data = dailySelectionStats.mapValues { it.value.avgTime }, color = Color.Blue)
+                StatsBarChart(title = stringResource(R.string.average_answer_time_sec), data = dailySelectionStats.mapValues { it.value.avgTime }, color = Color.Blue)
             }
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Input Mode", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.input_mode), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(8.dp))
-                    StatsTable(title = "Global", stats = inputGlobalStats)
+                    StatsTable(title = stringResource(R.string.global), stats = inputGlobalStats)
                 }
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Selection Mode", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.selection_mode), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(8.dp))
-                    StatsTable(title = "Global", stats = selectionGlobalStats)
+                    StatsTable(title = stringResource(R.string.global), stats = selectionGlobalStats)
                 }
             }
         }
@@ -697,16 +696,16 @@ fun StatsTable(title: String, stats: Stats) {
         Text(title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
         Spacer(modifier = Modifier.height(8.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Correct Answers:")
+            Text(stringResource(R.string.correct_answers))
             Text("${stats.correct}", color = Color.Green)
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Wrong Answers:")
+            Text(stringResource(R.string.wrong_answers))
             Text("${stats.incorrect}", color = Color.Red)
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Average Answer Time:")
-            Text("%.1fs".format(stats.avgTime), color = Color.Blue)
+            Text(stringResource(R.string.average_answer_time_label))
+            Text(stringResource(R.string.seconds_format, stats.avgTime), color = Color.Blue)
         }
     }
 }
@@ -715,7 +714,7 @@ fun StatsTable(title: String, stats: Stats) {
 fun CombinedStatsBarChart(title: String, data: Map<String, Stats>) {
     val allDates = data.keys.sorted()
     if (allDates.isEmpty()) {
-        Text("$title: No data yet")
+        Text(stringResource(R.string.no_data_yet, title))
         return
     }
 
@@ -768,7 +767,7 @@ fun CombinedStatsBarChart(title: String, data: Map<String, Stats>) {
                             )
                         }
                     }
-                    Text(date.substring(5).replace("-","/"), fontSize = 12.sp)
+                    Text(date.substring(5).replace("-", "/"), fontSize = 12.sp)
                 }
             }
         }
@@ -779,10 +778,10 @@ fun CombinedStatsBarChart(title: String, data: Map<String, Stats>) {
 @Composable
 fun StatsBarChart(title: String, data: Map<String, Float>, color: Color) {
     if (data.isEmpty()) {
-        Text("$title: No data yet")
+        Text(stringResource(R.string.no_data_yet, title))
         return
     }
-    
+
     val maxValue = data.values.maxOrNull() ?: 1f
     val barChartHeight = 150.dp
 
@@ -807,16 +806,16 @@ fun StatsBarChart(title: String, data: Map<String, Float>, color: Color) {
                         modifier = Modifier.height(barChartHeight)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
-                            Text("%.1f".format(value), fontSize = 12.sp)
+                            Text(stringResource(R.string.seconds_format, value), fontSize = 12.sp)
                             Box(
                                 modifier = Modifier
                                     .width(15.dp)
                                     .fillMaxHeight(value / maxValue)
-                                    .background(Color.Blue)
+                                    .background(color)
                             )
                         }
                     }
-                    Text(date.substring(5).replace("-","/"), fontSize = 12.sp)
+                    Text(date.substring(5).replace("-", "/"), fontSize = 12.sp)
                 }
             }
         }

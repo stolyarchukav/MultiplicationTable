@@ -1,4 +1,37 @@
 <resources>
     <string name="app_name">Multiplication Table</string>
     <string name="multiplication_table_title">Multiplication Table</string>
+    <string name="table">Table</string>
+    <string name="quiz">Quiz</string>
+    <string name="statistics">Statistics</string>
+    <string name="click_the_table_cell">Click the table cell</string>
+    <string name="multiply">Multiply</string>
+    <string name="back_to_table">Back to Table</string>
+    <string name="correct">Correct: </string>
+    <string name="wrong">Wrong: </string>
+    <string name="go_to_statistics">Go to Statistics</string>
+    <string name="average_answer_time_formatted">Average Answer Time: %.1fs</string>
+    <string name="switch_to_input_mode">Switch to Input Mode</string>
+    <string name="switch_to_selection_mode">Switch to Selection Mode</string>
+    <string name="check">Check</string>
+    <string name="toggle_view">Toggle View</string>
+    <string name="reset_stats">Reset Stats</string>
+    <string name="confirm_reset">Confirm Reset</string>
+    <string name="are_you_sure_reset">Are you sure you want to reset all statistics?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="daily_input_mode">Daily Input Mode</string>
+    <string name="correct_vs_wrong_answers">Correct vs Wrong Answers</string>
+    <string name="average_answer_time_sec">Average Answer Time, sec</string>
+    <string name="daily_selection_mode">Daily Selection Mode</string>
+    <string name="input_mode">Input Mode</string>
+    <string name="global">Global</string>
+    <string name="selection_mode">Selection Mode</string>
+    <string name="correct_answers">Correct Answers:</string>
+    <string name="wrong_answers">Wrong Answers:</string>
+    <string name="average_answer_time_label">Average Answer Time:</string>
+    <string name="no_data_yet">%s: No data yet</string>
+    <string name="equals_question"> = ?</string>
+    <string name="equals_sign"> = </string>
+    <string name="seconds_format">%.1fs</string>
 </resources>
