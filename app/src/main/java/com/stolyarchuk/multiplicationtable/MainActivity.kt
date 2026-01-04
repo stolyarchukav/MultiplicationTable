@@ -27,8 +27,11 @@ import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.CalendarViewDay
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Quiz
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -82,6 +85,10 @@ class QuizStatsManager(context: Context) {
         val currentIncorrect = prefs.getInt(INCORRECT_ANSWERS, 0)
         prefs.edit().putInt(INCORRECT_ANSWERS, currentIncorrect + 1).apply()
     }
+
+    fun resetScores() {
+        prefs.edit().putInt(CORRECT_ANSWERS, 0).putInt(INCORRECT_ANSWERS, 0).apply()
+    }
 }
 
 class MainActivity : ComponentActivity() {
@@ -121,7 +128,10 @@ fun MultiplicationTableApp() {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             when (currentDestination) {
                 AppDestinations.TABLE -> MultiplicationTableScreen(modifier = Modifier.padding(innerPadding))
-                AppDestinations.QUIZ -> QuizScreen(modifier = Modifier.padding(innerPadding))
+                AppDestinations.QUIZ -> QuizScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    onNavigateToTable = { currentDestination = AppDestinations.TABLE } 
+                )
                 AppDestinations.PROFILE -> {}
             }
         }
@@ -251,12 +261,13 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun QuizScreen(modifier: Modifier = Modifier) {
+fun QuizScreen(modifier: Modifier = Modifier, onNavigateToTable: () -> Unit) {
     var number1 by rememberSaveable { mutableStateOf(Random.nextInt(1, 10)) }
     var number2 by rememberSaveable { mutableStateOf(Random.nextInt(1, 10)) }
     var userAnswer by rememberSaveable { mutableStateOf("") }
     var resultState by rememberSaveable { mutableStateOf<Boolean?>(null) }
     val focusRequester = remember { FocusRequester() }
+    var showResetDialog by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val statsManager = remember { QuizStatsManager(context) }
@@ -287,21 +298,59 @@ fun QuizScreen(modifier: Modifier = Modifier) {
         focusRequester.requestFocus()
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+    Box(modifier = modifier.fillMaxSize().padding(16.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopCenter),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Text(text = "Correct: $correctAnswers", color = Color.Green, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                Text(text = "Wrong: $incorrectAnswers", color = Color.Red, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            IconButton(onClick = onNavigateToTable) {
+                Icon(Icons.Default.CalendarViewDay, contentDescription = "Back to Table")
+            }
+            Row {
+                Text(text = "Correct: ", color = Color.Green, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Text(text = "$correctAnswers", color = Color.Green, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            }
+            Row {
+                Text(text = "Wrong: ", color = Color.Red, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Text(text = "$incorrectAnswers", color = Color.Red, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            }
+            IconButton(onClick = { showResetDialog = true }) {
+                Icon(Icons.Default.Refresh, contentDescription = "Reset Stats")
             }
         }
+
+        if (showResetDialog) {
+            AlertDialog(
+                onDismissRequest = { showResetDialog = false },
+                title = { Text(text = "Confirm Reset") },
+                text = { Text("Are you sure you want to reset the statistics?") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            statsManager.resetScores()
+                            correctAnswers = 0
+                            incorrectAnswers = 0
+                            showResetDialog = false
+                        }
+                    ) {
+                        Text("Yes")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = { showResetDialog = false }
+                    ) {
+                        Text("No")
+                    }
+                }
+            )
+        }
+
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -373,6 +422,6 @@ fun MultiplicationTablePreview() {
 @Composable
 fun QuizScreenPreview() {
     MultiplicationTableTheme {
-        QuizScreen()
+        QuizScreen(onNavigateToTable = {})
     }
 }
