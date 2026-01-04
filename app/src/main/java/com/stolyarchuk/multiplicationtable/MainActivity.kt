@@ -329,6 +329,55 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
                 }
             }
         }
+
+        if (selectedRow != null && selectedCol != null) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "$selectedRow",
+                    fontSize = 48.sp,
+                    color = Color.Blue,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = "Multiply",
+                    tint = Color.Blue,
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "$selectedCol",
+                    fontSize = 48.sp,
+                    color = Color.Blue,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = " = ${selectedRow!! * selectedCol!!}",
+                    color = Color.Green,
+                    fontSize = 48.sp
+                )
+            }
+        } else {
+            Spacer(modifier = Modifier.height(32.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Click the table cell",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Normal
+                )
+            }
+        }
     }
 }
 
