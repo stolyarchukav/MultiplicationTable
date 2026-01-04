@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.CalendarViewDay
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Equalizer
 import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
@@ -65,10 +66,21 @@ import androidx.compose.ui.unit.sp
 import com.stolyarchuk.multiplicationtable.ui.theme.MultiplicationTableTheme
 import kotlin.random.Random
 
+data class Stats(val correct: Int, val incorrect: Int, val avgTime: Float)
+
 class QuizStatsManager(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("QuizStats", Context.MODE_PRIVATE)
 
     private fun getKey(base: String, mode: String) = "${mode}_${base}"
+
+    fun getStats(mode: String): Stats {
+        val correct = prefs.getInt(getKey("correct_answers", mode), 0)
+        val incorrect = prefs.getInt(getKey("incorrect_answers", mode), 0)
+        val totalTime = prefs.getLong(getKey("total_time_ms", mode), 0L)
+        val totalAnswers = prefs.getInt(getKey("total_answers", mode), 0)
+        val avgTime = if (totalAnswers > 0) totalTime.toFloat() / totalAnswers / 1000f else 0f
+        return Stats(correct, incorrect, avgTime)
+    }
 
     fun incrementCorrect(mode: String, timeInMillis: Long) {
         val key = getKey("correct_answers", mode)
@@ -116,6 +128,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MultiplicationTableApp() {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.TABLE) }
+    val context = LocalContext.current
+    val statsManager = remember { QuizStatsManager(context) }
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
@@ -139,9 +153,13 @@ fun MultiplicationTableApp() {
                 AppDestinations.TABLE -> MultiplicationTableScreen(modifier = Modifier.padding(innerPadding))
                 AppDestinations.QUIZ -> QuizScreen(
                     modifier = Modifier.padding(innerPadding),
-                    onNavigateToTable = { currentDestination = AppDestinations.TABLE } 
+                    onNavigateToTable = { currentDestination = AppDestinations.TABLE },
+                    statsManager = statsManager
                 )
-                AppDestinations.PROFILE -> {}
+                AppDestinations.STATISTICS -> StatisticsScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    statsManager = statsManager
+                )
             }
         }
     }
@@ -153,7 +171,7 @@ enum class AppDestinations(
 ) {
     TABLE("Table", Icons.Default.CalendarViewDay),
     QUIZ("Quiz", Icons.Default.Quiz),
-    PROFILE("Profile", Icons.Default.AccountBox),
+    STATISTICS("Statistics", Icons.Default.Equalizer),
 }
 
 @Composable
@@ -270,15 +288,17 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun QuizScreen(modifier: Modifier = Modifier, onNavigateToTable: () -> Unit) {
+fun QuizScreen(
+    modifier: Modifier = Modifier, 
+    onNavigateToTable: () -> Unit,
+    statsManager: QuizStatsManager
+) {
     var number1 by rememberSaveable { mutableStateOf(Random.nextInt(1, 10)) }
     var number2 by rememberSaveable { mutableStateOf(Random.nextInt(1, 10)) }
     var userAnswer by rememberSaveable { mutableStateOf("") }
     var resultState by rememberSaveable { mutableStateOf<Boolean?>(null) }
     val focusRequester = remember { FocusRequester() }
     var showResetDialog by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    val statsManager = remember { QuizStatsManager(context) }
     var sessionCorrectAnswers by rememberSaveable { mutableStateOf(0) }
     var sessionIncorrectAnswers by rememberSaveable { mutableStateOf(0) }
     var sessionTotalTime by rememberSaveable { mutableStateOf(0L) }
@@ -506,6 +526,40 @@ fun QuizScreen(modifier: Modifier = Modifier, onNavigateToTable: () -> Unit) {
     }
 }
 
+@Composable
+fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManager) {
+    val inputStats = remember { statsManager.getStats("input") }
+    val selectionStats = remember { statsManager.getStats("selection") }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text("Global Statistics", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+
+        // Input Mode Stats
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Input Mode", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Correct: ${inputStats.correct}", fontSize = 20.sp, color = Color.Green)
+            Text("Wrong: ${inputStats.incorrect}", fontSize = 20.sp, color = Color.Red)
+            Text("Average Response Time: %.1fs".format(inputStats.avgTime), fontSize = 20.sp, color = Color.Blue)
+        }
+
+        // Selection Mode Stats
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Selection Mode", fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Correct: ${selectionStats.correct}", fontSize = 20.sp, color = Color.Green)
+            Text("Wrong: ${selectionStats.incorrect}", fontSize = 20.sp, color = Color.Red)
+            Text("Average Response Time: %.1fs".format(selectionStats.avgTime), fontSize = 20.sp, color = Color.Blue)
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun MultiplicationTablePreview() {
@@ -518,6 +572,14 @@ fun MultiplicationTablePreview() {
 @Composable
 fun QuizScreenPreview() {
     MultiplicationTableTheme {
-        QuizScreen(onNavigateToTable = {})
+        QuizScreen(onNavigateToTable = {}, statsManager = QuizStatsManager(LocalContext.current))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun StatisticsScreenPreview() {
+    MultiplicationTableTheme {
+        StatisticsScreen(statsManager = QuizStatsManager(LocalContext.current))
     }
 }
