@@ -1,5 +1,7 @@
 package com.stolyarchuk.multiplicationtable
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -44,6 +47,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -54,6 +58,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.stolyarchuk.multiplicationtable.ui.theme.MultiplicationTableTheme
 import kotlin.random.Random
+
+class QuizStatsManager(context: Context) {
+    private val prefs: SharedPreferences = context.getSharedPreferences("QuizStats", Context.MODE_PRIVATE)
+
+    companion object {
+        private const val CORRECT_ANSWERS = "correct_answers"
+        private const val INCORRECT_ANSWERS = "incorrect_answers"
+    }
+
+    fun getScores(): Pair<Int, Int> {
+        val correct = prefs.getInt(CORRECT_ANSWERS, 0)
+        val incorrect = prefs.getInt(INCORRECT_ANSWERS, 0)
+        return Pair(correct, incorrect)
+    }
+
+    fun incrementCorrect() {
+        val currentCorrect = prefs.getInt(CORRECT_ANSWERS, 0)
+        prefs.edit().putInt(CORRECT_ANSWERS, currentCorrect + 1).apply()
+    }
+
+    fun incrementIncorrect() {
+        val currentIncorrect = prefs.getInt(INCORRECT_ANSWERS, 0)
+        prefs.edit().putInt(INCORRECT_ANSWERS, currentIncorrect + 1).apply()
+    }
+}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -229,6 +258,17 @@ fun QuizScreen(modifier: Modifier = Modifier) {
     var resultState by rememberSaveable { mutableStateOf<Boolean?>(null) }
     val focusRequester = remember { FocusRequester() }
 
+    val context = LocalContext.current
+    val statsManager = remember { QuizStatsManager(context) }
+    var correctAnswers by rememberSaveable { mutableStateOf(0) }
+    var incorrectAnswers by rememberSaveable { mutableStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        val (correct, incorrect) = statsManager.getScores()
+        correctAnswers = correct
+        incorrectAnswers = incorrect
+    }
+
     fun newQuestion() {
         number1 = Random.nextInt(1, 10)
         number2 = Random.nextInt(1, 10)
@@ -247,56 +287,76 @@ fun QuizScreen(modifier: Modifier = Modifier) {
         focusRequester.requestFocus()
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+    Box(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = "$number1", fontSize = 48.sp, color = Color.Green, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.width(8.dp))
-            Icon(Icons.Default.Close, contentDescription = "Multiply", tint = Color.Green, modifier = Modifier.size(32.dp))
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "$number2", fontSize = 48.sp, color = Color.Green, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "=", fontSize = 32.sp)
-            Spacer(modifier = Modifier.width(8.dp))
-            val textFieldColors = if (resultState == true) {
-                TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Green.copy(alpha = 0.2f),
-                    unfocusedContainerColor = Color.Green.copy(alpha = 0.2f),
-                )
-            } else {
-                TextFieldDefaults.colors()
-            }
-            TextField(
-                value = userAnswer,
-                onValueChange = { userAnswer = it.filter { char -> char.isDigit() } },
-                isError = resultState == false,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier
-                    .width(100.dp)
-                    .focusRequester(focusRequester),
-                textStyle = TextStyle(fontSize = 32.sp, textAlign = TextAlign.Center),
-                colors = textFieldColors
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = {
-                val correctAnswer = number1 * number2
-                resultState = userAnswer.toIntOrNull() == correctAnswer
-            }) {
-                Text("Check")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(text = "Correct: $correctAnswers", color = Color.Green, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Text(text = "Wrong: $incorrectAnswers", color = Color.Red, fontSize = 24.sp, fontWeight = FontWeight.Bold)
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        if (resultState != null) {
-            val color = if (resultState == true) Color.Green else Color.Red
-            Box(modifier = Modifier.size(50.dp).background(color, CircleShape))
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(text = "$number1", fontSize = 48.sp, color = Color.Green, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(Icons.Default.Close, contentDescription = "Multiply", tint = Color.Green, modifier = Modifier.size(32.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = "$number2", fontSize = 48.sp, color = Color.Green, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = "=", fontSize = 32.sp)
+                Spacer(modifier = Modifier.width(8.dp))
+                val textFieldColors = if (resultState == true) {
+                    TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Green.copy(alpha = 0.2f),
+                        unfocusedContainerColor = Color.Green.copy(alpha = 0.2f),
+                    )
+                } else {
+                    TextFieldDefaults.colors()
+                }
+                TextField(
+                    value = userAnswer,
+                    onValueChange = { userAnswer = it.filter { char -> char.isDigit() } },
+                    isError = resultState == false,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier
+                        .width(100.dp)
+                        .focusRequester(focusRequester),
+                    textStyle = TextStyle(fontSize = 32.sp, textAlign = TextAlign.Center),
+                    colors = textFieldColors
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(onClick = {
+                    val correctAnswer = number1 * number2
+                    val isCorrect = userAnswer.toIntOrNull() == correctAnswer
+                    resultState = isCorrect
+                    if (isCorrect) {
+                        statsManager.incrementCorrect()
+                        correctAnswers++
+                    } else {
+                        statsManager.incrementIncorrect()
+                        incorrectAnswers++
+                    }
+                }) {
+                    Text("Check")
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            if (resultState != null) {
+                val color = if (resultState == true) Color.Green else Color.Red
+                Box(modifier = Modifier.size(50.dp).background(color, CircleShape))
+            }
         }
     }
 }
