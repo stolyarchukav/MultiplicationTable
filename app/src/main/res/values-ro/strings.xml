@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Tabla înmulțirii</string>
+    <string name="multiplication_table_title">Tabla înmulțirii</string>
+    <string name="table">Tabel</string>
+    <string name="quiz">Practică</string>
+    <string name="statistics">Statistici</string>
+    <string name="click_the_table_cell">Faceți clic pe celula tabelului</string>
+    <string name="multiply">Înmulțiți</string>
+    <string name="back_to_table">Înapoi la tabel</string>
+    <string name="correct">"Corect: "</string>
+    <string name="wrong">"Greșit: "</string>
+    <string name="go_to_statistics">Mergeți la statistici</string>
+    <string name="average_answer_time_formatted">"Timp mediu de răspuns: %.1fs"</string>
+    <string name="switch_to_input_mode">Comutați la modul de introducere</string>
+    <string name="switch_to_selection_mode">Comutați la modul de selecție</string>
+    <string name="check">Verifica</string>
+    <string name="toggle_view">Comutați vizualizarea</string>
+    <string name="reset_stats">Resetați statisticile</string>
+    <string name="confirm_reset">Confirmați resetarea</string>
+    <string name="are_you_sure_reset">Sigur doriți să resetați toate statisticile?</string>
+    <string name="yes">Da</string>
+    <string name="no">Nu</string>
+    <string name="daily_input_mode">Mod de introducere zilnic</string>
+    <string name="correct_vs_wrong_answers">Răspunsuri corecte vs. greșite</string>
+    <string name="average_answer_time_sec">Timp mediu de răspuns, sec</string>
+    <string name="daily_selection_mode">Mod de selecție zilnic</string>
+    <string name="input_mode">Mod de introducere</string>
+    <string name="selection_mode">Mod de selecție</string>
+    <string name="correct_answers">"Răspunsuri corecte:"</string>
+    <string name="wrong_answers">"Răspunsuri greșite:"</string>
+    <string name="average_answer_time_label">"Timp mediu de răspuns:"</string>
+    <string name="no_data_yet">"%s: Încă nu există date"</string>
+    <string name="equals_question">" = ?"</string>
+    <string name="equals_sign">" = "</string>
+    <string name="seconds_format">"%.1fs"</string>
+    <string name="answers_per_number">Răspunsuri pe număr</string>
+    <string name="correct_percentage">"Corect (%)"</string>
+    <string name="percentage_format">"%.0f%%"</string>
+</resources>

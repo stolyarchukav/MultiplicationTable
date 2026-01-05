@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Таблица множења</string>
+    <string name="multiplication_table_title">Таблица множења</string>
+    <string name="table">Табела</string>
+    <string name="quiz">Пракса</string>
+    <string name="statistics">Статистика</string>
+    <string name="click_the_table_cell">Кликните на ћелију табеле</string>
+    <string name="multiply">Множи</string>
+    <string name="back_to_table">Назад на табелу</string>
+    <string name="correct">"Тачно: "</string>
+    <string name="wrong">"Нетачно: "</string>
+    <string name="go_to_statistics">Иди на статистику</string>
+    <string name="average_answer_time_formatted">"Просечно време одговора: %.1fs"</string>
+    <string name="switch_to_input_mode">Пребаци на режим уноса</string>
+    <string name="switch_to_selection_mode">Пребаци на режим избора</string>
+    <string name="check">Провери</string>
+    <string name="toggle_view">Промени приказ</string>
+    <string name="reset_stats">Ресетуј статистику</string>
+    <string name="confirm_reset">Потврди ресетовање</string>
+    <string name="are_you_sure_reset">Да ли сте сигурни да желите да ресетујете сву статистику?</string>
+    <string name="yes">Да</string>
+    <string name="no">Не</string>
+    <string name="daily_input_mode">Дневни режим уноса</string>
+    <string name="correct_vs_wrong_answers">Тачни и нетачни одговори</string>
+    <string name="average_answer_time_sec">Просечно време одговора, сек</string>
+    <string name="daily_selection_mode">Дневни режим избора</string>
+    <string name="input_mode">Режим уноса</string>
+    <string name="selection_mode">Режим избора</string>
+    <string name="correct_answers">"Тачни одговори:"</string>
+    <string name="wrong_answers">"Нетачни одговори:"</string>
+    <string name="average_answer_time_label">"Просечно време одговора:"</string>
+    <string name="no_data_yet">"%s: Још нема података"</string>
+    <string name="equals_question">" = ?"</string>
+    <string name="equals_sign">" = "</string>
+    <string name="seconds_format">"%.1fs"</string>
+    <string name="answers_per_number">Одговори по броју</string>
+    <string name="correct_percentage">"Тачно (%)"</string>
+    <string name="percentage_format">"%.0f%%"</string>
+</resources>

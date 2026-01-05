@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">乘法表</string>
+    <string name="multiplication_table_title">乘法表</string>
+    <string name="table">表格</string>
+    <string name="quiz">练习</string>
+    <string name="statistics">统计</string>
+    <string name="click_the_table_cell">单击表格单元格</string>
+    <string name="multiply">乘</string>
+    <string name="back_to_table">返回表</string>
+    <string name="correct">"正确： "</string>
+    <string name="wrong">"错误： "</string>
+    <string name="go_to_statistics">转到统计</string>
+    <string name="average_answer_time_formatted">"平均回答时间： %.1fs"</string>
+    <string name="switch_to_input_mode">切换到输入模式</string>
+    <string name="switch_to_selection_mode">切换到选择模式</string>
+    <string name="check">检查</string>
+    <string name="toggle_view">切换视图</string>
+    <string name="reset_stats">重置统计信息</string>
+    <string name="confirm_reset">确认重置</string>
+    <string name="are_you_sure_reset">您确定要重置所有统计信息吗？</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="daily_input_mode">每日输入模式</string>
+    <string name="correct_vs_wrong_answers">正确与错误答案</string>
+    <string name="average_answer_time_sec">平均回答时间（秒）</string>
+    <string name="daily_selection_mode">每日选择模式</string>
+    <string name="input_mode">输入模式</string>
+    <string name="selection_mode">选择模式</string>
+    <string name="correct_answers">"正确答案："</string>
+    <string name="wrong_answers">"错误答案："</string>
+    <string name="average_answer_time_label">"平均回答时间："</string>
+    <string name="no_data_yet">"%s：暂无数据"</string>
+    <string name="equals_question">" = ?"</string>
+    <string name="equals_sign">" = "</string>
+    <string name="seconds_format">"%.1fs"</string>
+    <string name="answers_per_number">每个数字的答案</string>
+    <string name="correct_percentage">"正确（%）"</string>
+    <string name="percentage_format">"%.0f%%"</string>
+</resources>

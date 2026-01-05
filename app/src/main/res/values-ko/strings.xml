@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">곱셈표</string>
+    <string name="multiplication_table_title">곱셈표</string>
+    <string name="table">표</string>
+    <string name="quiz">연습</string>
+    <string name="statistics">통계</string>
+    <string name="click_the_table_cell">표 셀을 클릭하세요</string>
+    <string name="multiply">곱하기</string>
+    <string name="back_to_table">표로 돌아가기</string>
+    <string name="correct">"정답: "</string>
+    <string name="wrong">"오답: "</string>
+    <string name="go_to_statistics">통계로 이동</string>
+    <string name="average_answer_time_formatted">"평균 답변 시간: %.1fs"</string>
+    <string name="switch_to_input_mode">입력 모드로 전환</string>
+    <string name="switch_to_selection_mode">선택 모드로 전환</string>
+    <string name="check">확인</string>
+    <string name="toggle_view">보기 전환</string>
+    <string name="reset_stats">통계 재설정</string>
+    <string name="confirm_reset">재설정 확인</string>
+    <string name="are_you_sure_reset">모든 통계를 재설정하시겠습니까?</string>
+    <string name="yes">예</string>
+    <string name="no">아니요</string>
+    <string name="daily_input_mode">일일 입력 모드</string>
+    <string name="correct_vs_wrong_answers">정답 대 오답</string>
+    <string name="average_answer_time_sec">평균 답변 시간(초)</string>
+    <string name="daily_selection_mode">일일 선택 모드</string>
+    <string name="input_mode">입력 모드</string>
+    <string name="selection_mode">선택 모드</string>
+    <string name="correct_answers">"정답:"</string>
+    <string name="wrong_answers">"오답:"</string>
+    <string name="average_answer_time_label">"평균 답변 시간:"</string>
+    <string name="no_data_yet">"%s: 아직 데이터 없음"</string>
+    <string name="equals_question">" = ?"</string>
+    <string name="equals_sign">" = "</string>
+    <string name="seconds_format">"%.1fs"</string>
+    <string name="answers_per_number">숫자당 답변</string>
+    <string name="correct_percentage">"정답률 (%)"</string>
+    <string name="percentage_format">"%.0f%%"</string>
+</resources>

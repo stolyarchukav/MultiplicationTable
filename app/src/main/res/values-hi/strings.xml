@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">गुणा तालिका</string>
+    <string name="multiplication_table_title">गुणा तालिका</string>
+    <string name="table">तालिका</string>
+    <string name="quiz">अभ्यास</string>
+    <string name="statistics">आंकड़े</string>
+    <string name="click_the_table_cell">तालिका सेल पर क्लिक करें</string>
+    <string name="multiply">गुणा करें</string>
+    <string name="back_to_table">तालिका पर वापस जाएं</string>
+    <string name="correct">"सही: "</string>
+    <string name="wrong">"गलत: "</string>
+    <string name="go_to_statistics">आंकड़ों पर जाएं</string>
+    <string name="average_answer_time_formatted">"औसत उत्तर समय: %.1fs"</string>
+    <string name="switch_to_input_mode">इनपुट मोड पर स्विच करें</string>
+    <string name="switch_to_selection_mode">चयन मोड पर स्विच करें</string>
+    <string name="check">जाँचें</string>
+    <string name="toggle_view">दृश्य टॉगल करें</string>
+    <string name="reset_stats">आंकड़े रीसेट करें</string>
+    <string name="confirm_reset">रीसेट की पुष्टि करें</string>
+    <string name="are_you_sure_reset">क्या आप वाकई सभी आंकड़े रीसेट करना चाहते हैं?</string>
+    <string name="yes">हाँ</string>
+    <string name="no">नहीं</string>
+    <string name="daily_input_mode">दैनिक इनपुट मोड</string>
+    <string name="correct_vs_wrong_answers">सही बनाम गलत उत्तर</string>
+    <string name="average_answer_time_sec">औसत उत्तर समय, सेकंड</string>
+    <string name="daily_selection_mode">दैनिक चयन मोड</string>
+    <string name="input_mode">इनपुट मोड</string>
+    <string name="selection_mode">चयन मोड</string>
+    <string name="correct_answers">"सही उत्तर:"</string>
+    <string name="wrong_answers">"गलत उत्तर:"</string>
+    <string name="average_answer_time_label">"औसत उत्तर समय:"</string>
+    <string name="no_data_yet">"%s: अभी तक कोई डेटा नहीं"</string>
+    <string name="equals_question">" = ?"</string>
+    <string name="equals_sign">" = "</string>
+    <string name="seconds_format">"%.1fs"</string>
+    <string name="answers_per_number">प्रति संख्या उत्तर</string>
+    <string name="correct_percentage">"सही (%)"</string>
+    <string name="percentage_format">"%.0f%%"</string>
+</resources>
