@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -62,6 +63,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -444,6 +446,21 @@ fun QuizScreen(
         questionStartTime = System.currentTimeMillis()
     }
 
+    fun checkAnswer() {
+        val timeTaken = System.currentTimeMillis() - questionStartTime
+        val isCorrect = userAnswer.toIntOrNull() == correctAnswer
+        resultState = isCorrect
+        sessionTotalTime += timeTaken
+        sessionAnswerCount++
+        if (isCorrect) {
+            statsManager.incrementCorrect("input", timeTaken, number1, number2)
+            sessionCorrectAnswers++
+        } else {
+            statsManager.incrementIncorrect("input", timeTaken, number1, number2)
+            sessionIncorrectAnswers++
+        }
+    }
+
     LaunchedEffect(correctAnswer) {
         val options = mutableSetOf(correctAnswer)
         while (options.size < 4) {
@@ -587,7 +604,8 @@ fun QuizScreen(
                             value = userAnswer,
                             onValueChange = { userAnswer = it.filter { char -> char.isDigit() } },
                             isError = resultState == false,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = { checkAnswer() }),
                             modifier = Modifier
                                 .width(100.dp)
                                 .focusRequester(focusRequester),
@@ -595,20 +613,7 @@ fun QuizScreen(
                             colors = if (resultState == true) TextFieldDefaults.colors(focusedContainerColor = Color.Green.copy(alpha = 0.2f), unfocusedContainerColor = Color.Green.copy(alpha = 0.2f)) else TextFieldDefaults.colors()
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Button(onClick = {
-                            val timeTaken = System.currentTimeMillis() - questionStartTime
-                            val isCorrect = userAnswer.toIntOrNull() == correctAnswer
-                            resultState = isCorrect
-                            sessionTotalTime += timeTaken
-                            sessionAnswerCount++
-                            if (isCorrect) {
-                                statsManager.incrementCorrect("input", timeTaken, number1, number2)
-                                sessionCorrectAnswers++
-                            } else {
-                                statsManager.incrementIncorrect("input", timeTaken, number1, number2)
-                                sessionIncorrectAnswers++
-                            }
-                        }) {
+                        Button(onClick = { checkAnswer() }) {
                             Text(stringResource(R.string.check))
                         }
                     }
