@@ -2,7 +2,7 @@
     <string name="app_name">Multiplication Table</string>
     <string name="multiplication_table_title">Multiplication Table</string>
     <string name="table">Table</string>
-    <string name="quiz">Quiz</string>
+    <string name="quiz">Practice</string>
     <string name="statistics">Statistics</string>
     <string name="click_the_table_cell">Click the table cell</string>
     <string name="multiply">Multiply</string>
