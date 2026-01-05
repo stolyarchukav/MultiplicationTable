@@ -242,7 +242,7 @@ enum class AppDestinations(
 fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
     var selectedRow by rememberSaveable { mutableStateOf<Int?>(null) }
     var selectedCol by rememberSaveable { mutableStateOf<Int?>(null) }
-    val headerColor = Color(0xFFEEEEEE)
+    val headerColor = Color.Gray
     val highlightColor = Color.Yellow.copy(alpha = 0.4f)
     val intersectionColor = Color.Green.copy(alpha = 0.4f)
 
@@ -761,7 +761,7 @@ fun NumberStatsTable(stats: NumberStats) {
         .fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Text("Number", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
-            Text(stringResource(R.string.correct_percentage), modifier = Modifier.weight(1f), color = Color.Black, textAlign = TextAlign.Center)
+            Text(stringResource(R.string.correct_percentage), modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
         }
         for (i in 1..9) {
             val correct = stats.correct[i] ?: 0
