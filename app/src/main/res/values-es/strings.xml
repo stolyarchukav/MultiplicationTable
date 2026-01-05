@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Tabla de multiplicar</string>
+    <string name="multiplication_table_title">Tabla de multiplicar</string>
+    <string name="table">Tabla</string>
+    <string name="quiz">Práctica</string>
+    <string name="statistics">Estadísticas</string>
+    <string name="click_the_table_cell">Haga clic en la celda de la tabla</string>
+    <string name="multiply">Multiplicar</string>
+    <string name="back_to_table">Volver a la tabla</string>
+    <string name="correct">"Correcto: "</string>
+    <string name="wrong">"Incorrecto: "</string>
+    <string name="go_to_statistics">Ir a Estadísticas</string>
+    <string name="average_answer_time_formatted">"Tiempo medio de respuesta: %.1fs"</string>
+    <string name="switch_to_input_mode">Cambiar al modo de entrada</string>
+    <string name="switch_to_selection_mode">Cambiar al modo de selección</string>
+    <string name="check">Verificar</string>
+    <string name="toggle_view">Alternar vista</string>
+    <string name="reset_stats">Restablecer estadísticas</string>
+    <string name="confirm_reset">Confirmar reinicio</string>
+    <string name="are_you_sure_reset">¿Estás seguro de que quieres restablecer todas las estadísticas?</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <string name="daily_input_mode">Modo de entrada diario</string>
+    <string name="correct_vs_wrong_answers">Respuestas correctas vs incorrectas</string>
+    <string name="average_answer_time_sec">Tiempo medio de respuesta, seg</string>
+    <string name="daily_selection_mode">Modo de selección diario</string>
+    <string name="input_mode">Modo de entrada</string>
+    <string name="selection_mode">Modo de selección</string>
+    <string name="correct_answers">"Respuestas correctas:"</string>
+    <string name="wrong_answers">"Respuestas incorrectas:"</string>
+    <string name="average_answer_time_label">"Tiempo medio de respuesta:"</string>
+    <string name="no_data_yet">"%s: Aún no hay datos"</string>
+    <string name="equals_question">" = ?"</string>
+    <string name="equals_sign">" = "</string>
+    <string name="seconds_format">"%.1fs"</string>
+    <string name="answers_per_number">Respuestas por número</string>
+    <string name="correct_percentage">"Correcto (%)"</string>
+    <string name="percentage_format">"%.0f%%"</string>
+</resources>

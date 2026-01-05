@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">Таблица умножения</string>
+    <string name="multiplication_table_title">Таблица умножения</string>
+    <string name="table">Таблица</string>
+    <string name="quiz">Практика</string>
+    <string name="statistics">Статистика</string>
+    <string name="click_the_table_cell">Нажмите на ячейку таблицы</string>
+    <string name="multiply">Умножить</string>
+    <string name="back_to_table">Назад к таблице</string>
+    <string name="correct">"Правильно: "</string>
+    <string name="wrong">"Неправильно: "</string>
+    <string name="go_to_statistics">Перейти к статистике</string>
+    <string name="average_answer_time_formatted">"Среднее время ответа: %.1fs"</string>
+    <string name="switch_to_input_mode">Переключиться в режим ввода</string>
+    <string name="switch_to_selection_mode">Переключиться в режим выбора</string>
+    <string name="check">Проверить</string>
+    <string name="toggle_view">Переключить вид</string>
+    <string name="reset_stats">Сбросить статистику</string>
+    <string name="confirm_reset">Подтвердите сброс</string>
+    <string name="are_you_sure_reset">Вы уверены, что хотите сбросить всю статистику?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="daily_input_mode">Ежедневный режим ввода</string>
+    <string name="correct_vs_wrong_answers">Правильные и неправильные ответы</string>
+    <string name="average_answer_time_sec">Среднее время ответа, сек</string>
+    <string name="daily_selection_mode">Ежедневный режим выбора</string>
+    <string name="input_mode">Режим ввода</string>
+    <string name="selection_mode">Режим выбора</string>
+    <string name="correct_answers">"Правильные ответы:"</string>
+    <string name="wrong_answers">"Неправильные ответы:"</string>
+    <string name="average_answer_time_label">"Среднее время ответа:"</string>
+    <string name="no_data_yet">"%s: Еще нет данных"</string>
+    <string name="equals_question">" = ?"</string>
+    <string name="equals_sign">" = "</string>
+    <string name="seconds_format">"%.1fs"</string>
+    <string name="answers_per_number">Ответы по числам</string>
+    <string name="correct_percentage">"Правильно (%)"</string>
+    <string name="percentage_format">"%.0f%%"</string>
+</resources>
