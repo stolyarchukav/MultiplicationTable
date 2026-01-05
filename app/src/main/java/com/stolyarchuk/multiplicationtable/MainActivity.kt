@@ -73,6 +73,7 @@ import java.util.Locale
 import kotlin.random.Random
 
 data class Stats(val correct: Int, val incorrect: Int, val avgTime: Float)
+data class NumberStats(val correct: Map<Int, Int>, val incorrect: Map<Int, Int>)
 
 class QuizStatsManager(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("QuizStats", Context.MODE_PRIVATE)
@@ -83,6 +84,7 @@ class QuizStatsManager(context: Context) {
     }
 
     private fun getKey(base: String, mode: String, scope: String) = "${scope}_${mode}_${base}"
+    private fun getNumberKey(base: String, mode: String, scope: String, number: Int) = "${scope}_${mode}_${base}_$number"
 
     fun getStats(mode: String, scope: String): Stats {
         val correct = prefs.getInt(getKey("correct_answers", mode, scope), 0)
@@ -93,12 +95,27 @@ class QuizStatsManager(context: Context) {
         return Stats(correct, incorrect, avgTime)
     }
 
+    fun getNumberStats(mode: String, scope: String): NumberStats {
+        val correctAnswers = mutableMapOf<Int, Int>()
+        val incorrectAnswers = mutableMapOf<Int, Int>()
+        for (i in 1..9) {
+            correctAnswers[i] = prefs.getInt(getNumberKey("correct_answers_number", mode, scope, i), 0)
+            incorrectAnswers[i] = prefs.getInt(getNumberKey("incorrect_answers_number", mode, scope, i), 0)
+        }
+        return NumberStats(correctAnswers, incorrectAnswers)
+    }
+
     fun getDailyStatsForMode(mode: String): Map<String, Stats> {
         val dates = prefs.getStringSet(DATES_SET, emptySet()) ?: emptySet()
         return dates.associateWith { date -> getStats(mode, date) }.toSortedMap()
     }
 
-    private fun _increment(scope: String, mode: String, isCorrect: Boolean, timeInMillis: Long) {
+    fun getDailyNumberStatsForMode(mode: String): Map<String, NumberStats> {
+        val dates = prefs.getStringSet(DATES_SET, emptySet()) ?: emptySet()
+        return dates.associateWith { date -> getNumberStats(mode, date) }.toSortedMap()
+    }
+
+    private fun _increment(scope: String, mode: String, isCorrect: Boolean, timeInMillis: Long, number1: Int, number2: Int) {
         val correctKey = getKey("correct_answers", mode, scope)
         val incorrectKey = getKey("incorrect_answers", mode, scope)
         val timeKey = getKey("total_time_ms", mode, scope)
@@ -118,6 +135,18 @@ class QuizStatsManager(context: Context) {
             .putLong(timeKey, totalTime + timeInMillis)
             .putInt(answersKey, totalAnswers + 1)
             .apply()
+
+        // Increment for each number
+        val baseKey = if (isCorrect) "correct_answers_number" else "incorrect_answers_number"
+        val n1key = getNumberKey(baseKey, mode, scope, number1)
+        val n1Count = prefs.getInt(n1key, 0)
+        prefs.edit().putInt(n1key, n1Count + 1).apply()
+
+        if (number1 != number2) {
+            val n2key = getNumberKey(baseKey, mode, scope, number2)
+            val n2Count = prefs.getInt(n2key, 0)
+            prefs.edit().putInt(n2key, n2Count + 1).apply()
+        }
     }
 
     private fun addDate(date: String) {
@@ -129,18 +158,18 @@ class QuizStatsManager(context: Context) {
         }
     }
 
-    fun incrementCorrect(mode: String, timeInMillis: Long) {
+    fun incrementCorrect(mode: String, timeInMillis: Long, number1: Int, number2: Int) {
         val today = dateFormat.format(Date())
         addDate(today)
-        _increment(today, mode, isCorrect = true, timeInMillis)
-        _increment("global", mode, isCorrect = true, timeInMillis)
+        _increment(today, mode, isCorrect = true, timeInMillis, number1, number2)
+        _increment("global", mode, isCorrect = true, timeInMillis, number1, number2)
     }
 
-    fun incrementIncorrect(mode: String, timeInMillis: Long) {
+    fun incrementIncorrect(mode: String, timeInMillis: Long, number1: Int, number2: Int) {
         val today = dateFormat.format(Date())
         addDate(today)
-        _increment(today, mode, isCorrect = false, timeInMillis)
-        _increment("global", mode, isCorrect = false, timeInMillis)
+        _increment(today, mode, isCorrect = false, timeInMillis, number1, number2)
+        _increment("global", mode, isCorrect = false, timeInMillis, number1, number2)
     }
 
     fun resetScores() {
@@ -517,10 +546,10 @@ fun QuizScreen(
                                                 sessionTotalTime += timeTaken
                                                 sessionAnswerCount++
                                                 if (isCorrect) {
-                                                    statsManager.incrementCorrect("selection", timeTaken)
+                                                    statsManager.incrementCorrect("selection", timeTaken, number1, number2)
                                                     sessionCorrectAnswers++
                                                 } else {
-                                                    statsManager.incrementIncorrect("selection", timeTaken)
+                                                    statsManager.incrementIncorrect("selection", timeTaken, number1, number2)
                                                     sessionIncorrectAnswers++
                                                 }
                                                 firstAttemptMade = true
@@ -569,10 +598,10 @@ fun QuizScreen(
                             sessionTotalTime += timeTaken
                             sessionAnswerCount++
                             if (isCorrect) {
-                                statsManager.incrementCorrect("input", timeTaken)
+                                statsManager.incrementCorrect("input", timeTaken, number1, number2)
                                 sessionCorrectAnswers++
                             } else {
-                                statsManager.incrementIncorrect("input", timeTaken)
+                                statsManager.incrementIncorrect("input", timeTaken, number1, number2)
                                 sessionIncorrectAnswers++
                             }
                         }) {
@@ -598,9 +627,14 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
 
     val inputGlobalStats = remember(refreshKey) { statsManager.getStats("input", "global") }
     val selectionGlobalStats = remember(refreshKey) { statsManager.getStats("selection", "global") }
+    val inputGlobalNumberStats = remember(refreshKey) { statsManager.getNumberStats("input", "global") }
+    val selectionGlobalNumberStats = remember(refreshKey) { statsManager.getNumberStats("selection", "global") }
+
 
     val dailyInputStats = remember(refreshKey) { statsManager.getDailyStatsForMode("input") }
     val dailySelectionStats = remember(refreshKey) { statsManager.getDailyStatsForMode("selection") }
+    val dailyInputNumberStats = remember(refreshKey) { statsManager.getDailyNumberStatsForMode("input") }
+    val dailySelectionNumberStats = remember(refreshKey) { statsManager.getDailyNumberStatsForMode("selection") }
 
 
     Column(
@@ -662,6 +696,8 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
                     data = dailyInputStats
                 )
                 StatsBarChart(title = stringResource(R.string.average_answer_time_sec), data = dailyInputStats.mapValues { it.value.avgTime }, color = Color.Blue)
+                PerNumberStatsBarChart(title = stringResource(R.string.answers_per_number), data = dailyInputNumberStats)
+
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -671,6 +707,7 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
                     data = dailySelectionStats
                 )
                 StatsBarChart(title = stringResource(R.string.average_answer_time_sec), data = dailySelectionStats.mapValues { it.value.avgTime }, color = Color.Blue)
+                PerNumberStatsBarChart(title = stringResource(R.string.answers_per_number), data = dailySelectionNumberStats)
             }
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -678,12 +715,16 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
                     Text(stringResource(R.string.input_mode), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(8.dp))
                     StatsTable(title = stringResource(R.string.global), stats = inputGlobalStats)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    NumberStatsTable(title = stringResource(R.string.answers_per_number), stats = inputGlobalNumberStats)
                 }
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(stringResource(R.string.selection_mode), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(8.dp))
                     StatsTable(title = stringResource(R.string.global), stats = selectionGlobalStats)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    NumberStatsTable(title = stringResource(R.string.answers_per_number), stats = selectionGlobalNumberStats)
                 }
             }
         }
@@ -706,6 +747,26 @@ fun StatsTable(title: String, stats: Stats) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(stringResource(R.string.average_answer_time_label))
             Text(stringResource(R.string.seconds_format, stats.avgTime), color = Color.Blue)
+        }
+    }
+}
+
+@Composable
+fun NumberStatsTable(title: String, stats: NumberStats) {
+    Column(modifier = Modifier.border(1.dp, Color.Gray).padding(8.dp).fillMaxWidth()) {
+        Text(title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Text("Number", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.correct), modifier = Modifier.weight(1f), color = Color.Green, textAlign = TextAlign.Center)
+            Text(stringResource(R.string.wrong), modifier = Modifier.weight(1f), color = Color.Red, textAlign = TextAlign.Center)
+        }
+        for (i in 1..9) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Text("$i", modifier = Modifier.weight(1f))
+                Text("${stats.correct[i]}", modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
+                Text("${stats.incorrect[i]}", modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
+            }
         }
     }
 }
@@ -821,6 +882,68 @@ fun StatsBarChart(title: String, data: Map<String, Float>, color: Color) {
         }
     }
 }
+
+@Composable
+fun PerNumberStatsBarChart(title: String, data: Map<String, NumberStats>) {
+    if (data.isEmpty()) {
+        Text(stringResource(R.string.no_data_yet, title))
+        return
+    }
+
+    val maxCorrect = data.values.flatMap { it.correct.values }.maxOrNull()?.toFloat() ?: 0f
+    val maxWrong = data.values.flatMap { it.incorrect.values }.maxOrNull()?.toFloat() ?: 0f
+    val maxValue = maxOf(maxCorrect, maxWrong).takeIf { it > 0f } ?: 1f
+    val barChartHeight = 200.dp
+
+    Column(modifier = Modifier.border(1.dp, Color.Gray).padding(8.dp).fillMaxWidth()) {
+        Text(title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(barChartHeight + 30.dp), // Total height for bars and labels
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            for (i in 1..9) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(2.dp),
+                        modifier = Modifier.height(barChartHeight)
+                    ) {
+                        val correctValue = data.values.sumOf { it.correct[i] ?: 0 }.toFloat()
+                        val wrongValue = data.values.sumOf { it.incorrect[i] ?: 0 }.toFloat()
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
+                            Text("%.0f".format(correctValue), fontSize = 10.sp)
+                            Box(
+                                modifier = Modifier
+                                    .width(15.dp)
+                                    .fillMaxHeight(correctValue / maxValue)
+                                    .background(Color.Green)
+                            )
+                        }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
+                            Text("%.0f".format(wrongValue), fontSize = 10.sp)
+                            Box(
+                                modifier = Modifier
+                                    .width(15.dp)
+                                    .fillMaxHeight(wrongValue / maxValue)
+                                    .background(Color.Red)
+                            )
+                        }
+                    }
+                    Text(text = "$i", fontSize = 12.sp)
+                }
+            }
+        }
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
