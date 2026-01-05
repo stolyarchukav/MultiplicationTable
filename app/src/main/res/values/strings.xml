@@ -25,7 +25,6 @@
     <string name="average_answer_time_sec">Average Answer Time, sec</string>
     <string name="daily_selection_mode">Daily Selection Mode</string>
     <string name="input_mode">Input Mode</string>
-    <string name="global">Global</string>
     <string name="selection_mode">Selection Mode</string>
     <string name="correct_answers">Correct Answers:</string>
     <string name="wrong_answers">Wrong Answers:</string>
@@ -35,4 +34,6 @@
     <string name="equals_sign"> = </string>
     <string name="seconds_format">%.1fs</string>
     <string name="answers_per_number">Answers per Number</string>
+    <string name="correct_percentage">Correct (%)</string>
+    <string name="percentage_format">%.0f%%</string>
 </resources>

@@ -3,9 +3,11 @@ package com.stolyarchuk.multiplicationtable
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -64,6 +66,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.stolyarchuk.multiplicationtable.ui.theme.MultiplicationTableTheme
@@ -110,11 +113,6 @@ class QuizStatsManager(context: Context) {
         return dates.associateWith { date -> getStats(mode, date) }.toSortedMap()
     }
 
-    fun getDailyNumberStatsForMode(mode: String): Map<String, NumberStats> {
-        val dates = prefs.getStringSet(DATES_SET, emptySet()) ?: emptySet()
-        return dates.associateWith { date -> getNumberStats(mode, date) }.toSortedMap()
-    }
-
     private fun _increment(scope: String, mode: String, isCorrect: Boolean, timeInMillis: Long, number1: Int, number2: Int) {
         val correctKey = getKey("correct_answers", mode, scope)
         val incorrectKey = getKey("incorrect_answers", mode, scope)
@@ -138,12 +136,12 @@ class QuizStatsManager(context: Context) {
 
         // Increment for each number
         val baseKey = if (isCorrect) "correct_answers_number" else "incorrect_answers_number"
-        val n1key = getNumberKey(baseKey, mode, scope, number1)
+        val n1key = getNumberKey(baseKey, "total", scope, number1)
         val n1Count = prefs.getInt(n1key, 0)
         prefs.edit().putInt(n1key, n1Count + 1).apply()
 
         if (number1 != number2) {
-            val n2key = getNumberKey(baseKey, mode, scope, number2)
+            val n2key = getNumberKey(baseKey, "total", scope, number2)
             val n2Count = prefs.getInt(n2key, 0)
             prefs.edit().putInt(n2key, n2Count + 1).apply()
         }
@@ -253,7 +251,9 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
             text = stringResource(id = R.string.multiplication_table_title),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 16.dp)
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(bottom = 16.dp)
         )
 
         // Header row for columns
@@ -469,9 +469,13 @@ fun QuizScreen(
         questionStartTime = System.currentTimeMillis()
     }
 
-    Box(modifier = modifier.fillMaxSize().padding(16.dp)) {
+    Box(modifier = modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         Column(
-            modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter),
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopCenter),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
@@ -611,7 +615,9 @@ fun QuizScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     if (resultState != null) {
                         val color = if (resultState == true) Color.Green else Color.Red
-                        Box(modifier = Modifier.size(50.dp).background(color, CircleShape))
+                        Box(modifier = Modifier
+                            .size(50.dp)
+                            .background(color, CircleShape))
                     }
                 }
             }
@@ -627,15 +633,10 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
 
     val inputGlobalStats = remember(refreshKey) { statsManager.getStats("input", "global") }
     val selectionGlobalStats = remember(refreshKey) { statsManager.getStats("selection", "global") }
-    val inputGlobalNumberStats = remember(refreshKey) { statsManager.getNumberStats("input", "global") }
-    val selectionGlobalNumberStats = remember(refreshKey) { statsManager.getNumberStats("selection", "global") }
-
+    val globalNumberStats = remember(refreshKey) { statsManager.getNumberStats("total", "global") }
 
     val dailyInputStats = remember(refreshKey) { statsManager.getDailyStatsForMode("input") }
     val dailySelectionStats = remember(refreshKey) { statsManager.getDailyStatsForMode("selection") }
-    val dailyInputNumberStats = remember(refreshKey) { statsManager.getDailyNumberStatsForMode("input") }
-    val dailySelectionNumberStats = remember(refreshKey) { statsManager.getDailyNumberStatsForMode("selection") }
-
 
     Column(
         modifier = modifier
@@ -696,8 +697,6 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
                     data = dailyInputStats
                 )
                 StatsBarChart(title = stringResource(R.string.average_answer_time_sec), data = dailyInputStats.mapValues { it.value.avgTime }, color = Color.Blue)
-                PerNumberStatsBarChart(title = stringResource(R.string.answers_per_number), data = dailyInputNumberStats)
-
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -707,24 +706,26 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
                     data = dailySelectionStats
                 )
                 StatsBarChart(title = stringResource(R.string.average_answer_time_sec), data = dailySelectionStats.mapValues { it.value.avgTime }, color = Color.Blue)
-                PerNumberStatsBarChart(title = stringResource(R.string.answers_per_number), data = dailySelectionNumberStats)
             }
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(stringResource(R.string.input_mode), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(8.dp))
-                    StatsTable(title = stringResource(R.string.global), stats = inputGlobalStats)
+                    StatsTable(stats = inputGlobalStats)
                     Spacer(modifier = Modifier.height(8.dp))
-                    NumberStatsTable(title = stringResource(R.string.answers_per_number), stats = inputGlobalNumberStats)
                 }
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(stringResource(R.string.selection_mode), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(8.dp))
-                    StatsTable(title = stringResource(R.string.global), stats = selectionGlobalStats)
+                    StatsTable(stats = selectionGlobalStats)
                     Spacer(modifier = Modifier.height(8.dp))
-                    NumberStatsTable(title = stringResource(R.string.answers_per_number), stats = selectionGlobalNumberStats)
+                }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(stringResource(R.string.answers_per_number), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    NumberStatsTable(stats = globalNumberStats)
                 }
             }
         }
@@ -732,10 +733,11 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
 }
 
 @Composable
-fun StatsTable(title: String, stats: Stats) {
-    Column(modifier = Modifier.border(1.dp, Color.Gray).padding(8.dp).fillMaxWidth()) {
-        Text(title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-        Spacer(modifier = Modifier.height(8.dp))
+fun StatsTable(stats: Stats) {
+    Column(modifier = Modifier
+        .border(1.dp, Color.Gray)
+        .padding(8.dp)
+        .fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(stringResource(R.string.correct_answers))
             Text("${stats.correct}", color = Color.Green)
@@ -752,20 +754,24 @@ fun StatsTable(title: String, stats: Stats) {
 }
 
 @Composable
-fun NumberStatsTable(title: String, stats: NumberStats) {
-    Column(modifier = Modifier.border(1.dp, Color.Gray).padding(8.dp).fillMaxWidth()) {
-        Text(title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-        Spacer(modifier = Modifier.height(8.dp))
+fun NumberStatsTable(stats: NumberStats) {
+    Column(modifier = Modifier
+        .border(1.dp, Color.Gray)
+        .padding(8.dp)
+        .fillMaxWidth()) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Text("Number", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
-            Text(stringResource(R.string.correct), modifier = Modifier.weight(1f), color = Color.Green, textAlign = TextAlign.Center)
-            Text(stringResource(R.string.wrong), modifier = Modifier.weight(1f), color = Color.Red, textAlign = TextAlign.Center)
+            Text(stringResource(R.string.correct_percentage), modifier = Modifier.weight(1f), color = Color.Black, textAlign = TextAlign.Center)
         }
         for (i in 1..9) {
+            val correct = stats.correct[i] ?: 0
+            val incorrect = stats.incorrect[i] ?: 0
+            val total = correct + incorrect
+            val percentage = if (total > 0) (correct.toFloat() / total) * 100 else 0f
             Row(modifier = Modifier.fillMaxWidth()) {
                 Text("$i", modifier = Modifier.weight(1f))
-                Text("${stats.correct[i]}", modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
-                Text("${stats.incorrect[i]}", modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
+
+                Text(stringResource(R.string.percentage_format, percentage), modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
             }
         }
     }
@@ -784,7 +790,10 @@ fun CombinedStatsBarChart(title: String, data: Map<String, Stats>) {
     val maxValue = maxOf(maxCorrect, maxWrong).takeIf { it > 0f } ?: 1f
     val barChartHeight = 150.dp
 
-    Column(modifier = Modifier.border(1.dp, Color.Gray).padding(8.dp).fillMaxWidth()) {
+    Column(modifier = Modifier
+        .border(1.dp, Color.Gray)
+        .padding(8.dp)
+        .fillMaxWidth()) {
         Text(title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
         Spacer(modifier = Modifier.height(8.dp))
         Row(
@@ -846,11 +855,16 @@ fun StatsBarChart(title: String, data: Map<String, Float>, color: Color) {
     val maxValue = data.values.maxOrNull() ?: 1f
     val barChartHeight = 150.dp
 
-    Column(modifier = Modifier.border(1.dp, Color.Gray).padding(8.dp).fillMaxWidth()) {
+    Column(modifier = Modifier
+        .border(1.dp, Color.Gray)
+        .padding(8.dp)
+        .fillMaxWidth()) {
         Text(title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
         Spacer(modifier = Modifier.height(8.dp))
         Row(
-            modifier = Modifier.fillMaxWidth().height(barChartHeight + 30.dp), // Total height for bars and labels
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(barChartHeight + 30.dp), // Total height for bars and labels
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Bottom
         ) {
@@ -882,68 +896,6 @@ fun StatsBarChart(title: String, data: Map<String, Float>, color: Color) {
         }
     }
 }
-
-@Composable
-fun PerNumberStatsBarChart(title: String, data: Map<String, NumberStats>) {
-    if (data.isEmpty()) {
-        Text(stringResource(R.string.no_data_yet, title))
-        return
-    }
-
-    val maxCorrect = data.values.flatMap { it.correct.values }.maxOrNull()?.toFloat() ?: 0f
-    val maxWrong = data.values.flatMap { it.incorrect.values }.maxOrNull()?.toFloat() ?: 0f
-    val maxValue = maxOf(maxCorrect, maxWrong).takeIf { it > 0f } ?: 1f
-    val barChartHeight = 200.dp
-
-    Column(modifier = Modifier.border(1.dp, Color.Gray).padding(8.dp).fillMaxWidth()) {
-        Text(title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(barChartHeight + 30.dp), // Total height for bars and labels
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.Bottom
-        ) {
-            for (i in 1..9) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Bottom,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.Bottom,
-                        horizontalArrangement = Arrangement.spacedBy(2.dp),
-                        modifier = Modifier.height(barChartHeight)
-                    ) {
-                        val correctValue = data.values.sumOf { it.correct[i] ?: 0 }.toFloat()
-                        val wrongValue = data.values.sumOf { it.incorrect[i] ?: 0 }.toFloat()
-                        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
-                            Text("%.0f".format(correctValue), fontSize = 10.sp)
-                            Box(
-                                modifier = Modifier
-                                    .width(15.dp)
-                                    .fillMaxHeight(correctValue / maxValue)
-                                    .background(Color.Green)
-                            )
-                        }
-                        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
-                            Text("%.0f".format(wrongValue), fontSize = 10.sp)
-                            Box(
-                                modifier = Modifier
-                                    .width(15.dp)
-                                    .fillMaxHeight(wrongValue / maxValue)
-                                    .background(Color.Red)
-                            )
-                        }
-                    }
-                    Text(text = "$i", fontSize = 12.sp)
-                }
-            }
-        }
-    }
-}
-
 
 @Preview(showBackground = true)
 @Composable
