@@ -36,4 +36,5 @@
     <string name="answers_per_number">숫자당 답변</string>
     <string name="correct_percentage">"정답률 (%)"</string>
     <string name="percentage_format">"%.0f%%"</string>
+    <string name="heat_map">히트맵</string>
 </resources>

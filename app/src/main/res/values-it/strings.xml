@@ -36,4 +36,5 @@
     <string name="answers_per_number">Risposte per numero</string>
     <string name="correct_percentage">"Corrette (%)"</string>
     <string name="percentage_format">"%.0f%%"</string>
+    <string name="heat_map">Mappa di calore</string>
 </resources>

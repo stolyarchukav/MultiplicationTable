@@ -36,4 +36,5 @@
     <string name="answers_per_number">番号ごとの回答</string>
     <string name="correct_percentage">"正解率（%）"</string>
     <string name="percentage_format">"%.0f%%"</string>
+    <string name="heat_map">ヒートマップ</string>
 </resources>

@@ -36,4 +36,5 @@
     <string name="answers_per_number">Antworten pro Nummer</string>
     <string name="correct_percentage">"Richtig (%)"</string>
     <string name="percentage_format">"%.0f%%"</string>
+    <string name="heat_map">Heatmap</string>
 </resources>

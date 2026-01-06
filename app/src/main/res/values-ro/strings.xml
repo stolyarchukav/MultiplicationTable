@@ -36,4 +36,5 @@
     <string name="answers_per_number">Răspunsuri pe număr</string>
     <string name="correct_percentage">"Corect (%)"</string>
     <string name="percentage_format">"%.0f%%"</string>
+    <string name="heat_map">Hartă termică</string>
 </resources>

@@ -770,7 +770,7 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(stringResource(R.string.heap_map), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.heat_map), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(8.dp))
                     HeatMapScreen(statsManager = statsManager)
                     Spacer(modifier = Modifier.height(8.dp))
