@@ -517,7 +517,7 @@ fun QuizScreen(
             val avgTime = if (sessionAnswerCount > 0) sessionTotalTime.toFloat() / sessionAnswerCount / 1000f else 0f
             Text(stringResource(R.string.average_answer_time_formatted, avgTime), color = Color.Blue, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(28.dp))
             TextButton(
                 onClick = { isSelectionMode = !isSelectionMode },
                 modifier = Modifier.border(2.dp, Color.Gray, ButtonDefaults.shape)
