@@ -504,14 +504,11 @@ fun QuizScreen(
                 IconButton(onClick = onNavigateToTable, modifier = Modifier.border(2.dp, Color.Gray, CircleShape)) {
                     Icon(Icons.Default.BorderAll, contentDescription = stringResource(R.string.back_to_table))
                 }
-                Row {
-                    Text(text = stringResource(R.string.correct), color = Color.Green, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "$sessionCorrectAnswers", color = Color.Green, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                }
-                Row {
-                    Text(text = stringResource(R.string.wrong), color = Color.Red, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "$sessionIncorrectAnswers", color = Color.Red, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                }
+                ScoreProgressBar(
+                    correct = sessionCorrectAnswers,
+                    incorrect = sessionIncorrectAnswers,
+                    modifier = Modifier.weight(1f)
+                )
                 IconButton(onClick = onNavigateToStats, modifier = Modifier.border(2.dp, Color.Gray, CircleShape)) {
                     Icon(Icons.Default.Equalizer, contentDescription = stringResource(R.string.go_to_statistics))
                 }
@@ -626,6 +623,45 @@ fun QuizScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ScoreProgressBar(correct: Int, incorrect: Int, modifier: Modifier = Modifier) {
+    val total = correct + incorrect
+
+    val correctWeight = if (total > 0 && correct > 0) correct.toFloat() / total else 0.01f
+    val incorrectWeight = if (total > 0 && incorrect > 0) incorrect.toFloat() / total else 0.01f
+
+    Column(modifier = modifier.padding(horizontal = 8.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(24.dp)
+                .border(1.dp, Color.Gray, CircleShape)
+                .background(Color.Transparent, CircleShape),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(correctWeight)
+                    .fillMaxHeight()
+                    .background(Color.Green, CircleShape)
+            )
+            Box(
+                modifier = Modifier
+                    .weight(incorrectWeight)
+                    .fillMaxHeight()
+                    .background(Color.Red, CircleShape)
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "$correct", color = Color.Green, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(text = "$incorrect", color = Color.Red, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
