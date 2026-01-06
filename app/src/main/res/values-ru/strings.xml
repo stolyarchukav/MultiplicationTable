@@ -36,4 +36,5 @@
     <string name="answers_per_number">Ответы по числам</string>
     <string name="correct_percentage">"Правильно (%)"</string>
     <string name="percentage_format">"%.0f%%"</string>
+    <string name="heap_map">Тепловая карта ответов</string>
 </resources>

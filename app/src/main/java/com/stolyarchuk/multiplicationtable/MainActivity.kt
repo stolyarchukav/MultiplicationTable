@@ -3,11 +3,9 @@ package com.stolyarchuk.multiplicationtable
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -68,7 +66,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.stolyarchuk.multiplicationtable.ui.theme.MultiplicationTableTheme
@@ -91,6 +88,8 @@ class QuizStatsManager(context: Context) {
     private fun getKey(base: String, mode: String, scope: String) = "${scope}_${mode}_${base}"
     private fun getNumberKey(base: String, mode: String, scope: String, number: Int) = "${scope}_${mode}_${base}_$number"
 
+    private fun getNumberPairKey(base: String, mode: String, scope: String, number1: Int, number2: Int) = "${scope}_${mode}_${base}_${number1}_${number2}"
+
     fun getStats(mode: String, scope: String): Stats {
         val correct = prefs.getInt(getKey("correct_answers", mode, scope), 0)
         val incorrect = prefs.getInt(getKey("incorrect_answers", mode, scope), 0)
@@ -108,6 +107,20 @@ class QuizStatsManager(context: Context) {
             incorrectAnswers[i] = prefs.getInt(getNumberKey("incorrect_answers_number", mode, scope, i), 0)
         }
         return NumberStats(correctAnswers, incorrectAnswers)
+    }
+
+    fun getPairNumberCorrectRateStat(): Map<Pair<Int, Int>, Float> {
+        val rates = mutableMapOf<Pair<Int, Int>, Float>()
+        for (number1 in 1..9) {
+            for (number2 in 1..9) {
+                val correctAnswers = prefs.getInt(getNumberPairKey("correct_answers_number", "total", "global", number1, number2), 0)
+                val incorrectAnswers = prefs.getInt(getNumberPairKey("incorrect_answers_number", "total", "global", number1, number2), 0)
+                val rate = if (correctAnswers + incorrectAnswers == 0) 0f
+                    else correctAnswers.toFloat() / (correctAnswers + incorrectAnswers).toFloat()
+                rates[Pair(number1, number2)] = rate
+            }
+        }
+        return rates
     }
 
     fun getDailyStatsForMode(mode: String): Map<String, Stats> {
@@ -136,17 +149,22 @@ class QuizStatsManager(context: Context) {
             .putInt(answersKey, totalAnswers + 1)
             .apply()
 
-        // Increment for each number
         val baseKey = if (isCorrect) "correct_answers_number" else "incorrect_answers_number"
+
+        // Increment for each number
         val n1key = getNumberKey(baseKey, "total", scope, number1)
         val n1Count = prefs.getInt(n1key, 0)
         prefs.edit().putInt(n1key, n1Count + 1).apply()
-
         if (number1 != number2) {
             val n2key = getNumberKey(baseKey, "total", scope, number2)
             val n2Count = prefs.getInt(n2key, 0)
             prefs.edit().putInt(n2key, n2Count + 1).apply()
         }
+
+        //increment for each pair
+        val pairKey = getNumberPairKey(baseKey, "total", scope, number1, number2)
+        val pairCount = prefs.getInt(pairKey, 0)
+        prefs.edit().putInt(pairKey, pairCount + 1).apply()
     }
 
     private fun addDate(date: String) {
@@ -750,6 +768,14 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
             }
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(stringResource(R.string.heap_map), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    HeatMapScreen(statsManager = statsManager)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(stringResource(R.string.input_mode), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(8.dp))
@@ -767,6 +793,72 @@ fun StatisticsScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManag
                     Text(stringResource(R.string.answers_per_number), fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
                     Spacer(modifier = Modifier.height(8.dp))
                     NumberStatsTable(stats = globalNumberStats)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun HeatMapScreen(modifier: Modifier = Modifier, statsManager: QuizStatsManager) {
+    val headerColor = Color.Gray
+    val noDataColor = Color.White
+    val badColor = Color.Red
+    val mediumColor = Color.Yellow
+    val goodColor = Color.Green
+
+    Column(modifier = modifier.padding(16.dp)) {
+        // Header row for columns
+        Row {
+            Text(
+                text = " ", modifier = Modifier
+                    .weight(1f)
+                    .background(headerColor)
+                    .border(1.dp, Color.Gray)
+                    .padding(4.dp)
+            ) // Empty top-left cell
+            for (j in 1..9) {
+                Text(
+                    text = "$j",
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(headerColor)
+                        .border(1.dp, Color.Gray)
+                        .padding(4.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+        val rates = statsManager.getPairNumberCorrectRateStat()
+        for (i in 1..9) {
+            Row {
+                Text(
+                    text = "$i",
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(headerColor)
+                        .border(1.dp, Color.Gray)
+                        .padding(4.dp),
+                    textAlign = TextAlign.Center
+                )
+                for (j in 1..9) {
+                    val rate = rates[Pair(i, j)]
+                    val cellBackground = when {
+                        rate == null -> noDataColor
+                        rate == 0f -> noDataColor
+                        rate < 0.4f -> badColor
+                        rate < 0.9f -> mediumColor
+                        else -> goodColor
+                    }
+                    Text(
+                        text = "${i * j}",
+                        modifier = Modifier
+                            .weight(1f)
+                            .background(cellBackground)
+                            .border(1.dp, Color.Gray)
+                            .padding(4.dp),
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         }
