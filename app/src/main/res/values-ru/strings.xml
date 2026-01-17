@@ -37,4 +37,5 @@
     <string name="correct_percentage">"Правильно (%)"</string>
     <string name="percentage_format">"%.0f%%"</string>
     <string name="heat_map">Тепловая карта ответов</string>
+    <string name="hint">Подсказка</string>
 </resources>

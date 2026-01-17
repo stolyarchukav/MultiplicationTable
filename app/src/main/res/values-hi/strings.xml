@@ -37,4 +37,5 @@
     <string name="correct_percentage">"सही (%)"</string>
     <string name="percentage_format">"%.0f%%"</string>
     <string name="heat_map">हीट मैप</string>
+    <string name="hint">संकेत</string>
 </resources>

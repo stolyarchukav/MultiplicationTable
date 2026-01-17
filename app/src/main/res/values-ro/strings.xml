@@ -37,4 +37,5 @@
     <string name="correct_percentage">"Corect (%)"</string>
     <string name="percentage_format">"%.0f%%"</string>
     <string name="heat_map">Hartă termică</string>
+    <string name="hint">Sugestie</string>
 </resources>

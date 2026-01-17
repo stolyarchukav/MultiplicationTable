@@ -37,4 +37,5 @@
     <string name="correct_percentage">"Richtig (%)"</string>
     <string name="percentage_format">"%.0f%%"</string>
     <string name="heat_map">Heatmap</string>
+    <string name="hint">Hinweis</string>
 </resources>

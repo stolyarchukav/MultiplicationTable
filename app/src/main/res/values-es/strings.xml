@@ -37,4 +37,5 @@
     <string name="correct_percentage">"Correcto (%)"</string>
     <string name="percentage_format">"%.0f%%"</string>
     <string name="heat_map">Mapa de calor</string>
+    <string name="hint">Pista</string>
 </resources>
