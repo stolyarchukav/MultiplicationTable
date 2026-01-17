@@ -31,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BorderAll
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Equalizer
+import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
@@ -259,9 +260,14 @@ enum class AppDestinations(
 }
 
 @Composable
-fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
-    var selectedRow by rememberSaveable { mutableStateOf<Int?>(null) }
-    var selectedCol by rememberSaveable { mutableStateOf<Int?>(null) }
+fun MultiplicationTableScreen(
+    modifier: Modifier = Modifier,
+    initialSelectedRow: Int? = null,
+    initialSelectedCol: Int? = null,
+    isReadOnly: Boolean = false
+) {
+    var selectedRow by rememberSaveable { mutableStateOf(initialSelectedRow) }
+    var selectedCol by rememberSaveable { mutableStateOf(initialSelectedCol) }
     val headerColor = Color.Gray
     val highlightColor = Color.Yellow.copy(alpha = 0.4f)
     val intersectionColor = Color.Green.copy(alpha = 0.4f)
@@ -283,8 +289,8 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
                     .weight(1f)
                     .background(headerColor)
                     .border(1.dp, Color.Gray)
-                    .padding(4.dp)
-                    .clickable {
+                    .padding(if (isReadOnly) 1.dp else 4.dp)
+                    .clickable(enabled = !isReadOnly) {
                         selectedRow = null
                         selectedCol = null
                     }
@@ -297,8 +303,8 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
                         .weight(1f)
                         .background(background)
                         .border(1.dp, Color.Gray)
-                        .padding(4.dp)
-                        .clickable {
+                        .padding(if (isReadOnly) 1.dp else 4.dp)
+                        .clickable(enabled = !isReadOnly) {
                             if (selectedCol == j) {
                                 if (selectedRow != null) {
                                     selectedRow = null // collapse cell to col
@@ -324,8 +330,8 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
                         .weight(1f)
                         .background(background)
                         .border(1.dp, Color.Gray)
-                        .padding(4.dp)
-                        .clickable {
+                        .padding(if (isReadOnly) 1.dp else 4.dp)
+                        .clickable(enabled = !isReadOnly) {
                             if (selectedRow == i) {
                                 if (selectedCol != null) {
                                     selectedCol = null // collapse cell to row
@@ -361,8 +367,8 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
                             .weight(1f)
                             .background(cellBackground)
                             .border(1.dp, Color.Gray)
-                            .padding(4.dp)
-                            .clickable {
+                            .padding(if (isReadOnly) 1.dp else 4.dp)
+                            .clickable(enabled = !isReadOnly) {
                                 if (isSelected) {
                                     selectedRow = null
                                     selectedCol = null
@@ -378,52 +384,54 @@ fun MultiplicationTableScreen(modifier: Modifier = Modifier) {
             }
         }
 
-        if (selectedRow != null && selectedCol != null) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "$selectedRow",
-                    fontSize = 48.sp,
-                    color = Color.Blue,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    Icons.Default.Close,
-                    contentDescription = stringResource(R.string.multiply),
-                    tint = Color.Blue,
-                    modifier = Modifier.size(32.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "$selectedCol",
-                    fontSize = 48.sp,
-                    color = Color.Blue,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.equals_sign) + (selectedRow!! * selectedCol!!),
-                    color = Color.Green,
-                    fontSize = 48.sp
-                )
-            }
-        } else {
-            Spacer(modifier = Modifier.height(32.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.click_the_table_cell),
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Normal
-                )
+        if (!isReadOnly) {
+            if (selectedRow != null && selectedCol != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "$selectedRow",
+                        fontSize = 48.sp,
+                        color = Color.Blue,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(R.string.multiply),
+                        tint = Color.Blue,
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "$selectedCol",
+                        fontSize = 48.sp,
+                        color = Color.Blue,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.equals_sign) + (selectedRow!! * selectedCol!!),
+                        color = Color.Green,
+                        fontSize = 48.sp
+                    )
+                }
+            } else {
+                Spacer(modifier = Modifier.height(32.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.click_the_table_cell),
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Normal
+                    )
+                }
             }
         }
     }
@@ -451,6 +459,7 @@ fun QuizScreen(
     var answerOptions by remember { mutableStateOf<List<Int>>(emptyList()) }
     var selectionResults by remember { mutableStateOf<Map<Int, Boolean>>(emptyMap()) }
     var firstAttemptMade by remember { mutableStateOf(false) }
+    var showHintDialog by remember { mutableStateOf(false) }
 
     val correctAnswer = number1 * number2
 
@@ -502,6 +511,25 @@ fun QuizScreen(
             focusRequester.requestFocus()
         }
         questionStartTime = System.currentTimeMillis()
+    }
+
+    if (showHintDialog) {
+        AlertDialog(
+            onDismissRequest = { showHintDialog = false },
+            text = {
+                MultiplicationTableScreen(
+                    modifier = Modifier.fillMaxWidth(),
+                    initialSelectedRow = number1,
+                    initialSelectedCol = number2,
+                    isReadOnly = true
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { showHintDialog = false }) {
+                    Text(stringResource(id = android.R.string.ok))
+                }
+            }
+        )
     }
 
     Box(modifier = modifier
@@ -640,6 +668,9 @@ fun QuizScreen(
                             .background(color, CircleShape))
                     }
                 }
+            }
+            IconButton(onClick = { showHintDialog = true }) {
+                Icon(Icons.Default.Help, contentDescription = stringResource(R.string.hint))
             }
         }
     }
