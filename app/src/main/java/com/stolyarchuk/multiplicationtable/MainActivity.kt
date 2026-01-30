@@ -465,15 +465,22 @@ fun QuizScreen(
     val correctAnswer = number1 * number2
 
     fun newQuestion() {
-        val n1 = selectedNumbers.random()
-        var n2 = Random.nextInt(1, 10)
-        if (Random.nextBoolean()) {
-            number1 = n1
-            number2 = n2
-        } else {
-            number1 = n2
-            number2 = n1
-        }
+        var n1: Int
+        var n2: Int
+        do {
+            val tempN1 = selectedNumbers.random()
+            val tempN2 = Random.nextInt(1, 10)
+            if (Random.nextBoolean()) {
+                n1 = tempN1
+                n2 = tempN2
+            } else {
+                n1 = tempN2
+                n2 = tempN1
+            }
+        } while (n1 == number1 && n2 == number2)
+        number1 = n1
+        number2 = n2
+
         userAnswer = ""
         resultState = null
         selectionResults = emptyMap()
