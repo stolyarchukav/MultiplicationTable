@@ -444,8 +444,9 @@ fun QuizScreen(
     onNavigateToStats: () -> Unit,
     statsManager: QuizStatsManager
 ) {
-    var number1 by rememberSaveable { mutableStateOf(Random.nextInt(1, 10)) }
-    var number2 by rememberSaveable { mutableStateOf(Random.nextInt(1, 10)) }
+    var selectedNumbers by rememberSaveable { mutableStateOf((1..9).toList()) }
+    var number1 by rememberSaveable { mutableStateOf(selectedNumbers.random()) }
+    var number2 by rememberSaveable { mutableStateOf(selectedNumbers.random()) }
     var userAnswer by rememberSaveable { mutableStateOf("") }
     var resultState by rememberSaveable { mutableStateOf<Boolean?>(null) }
     val focusRequester = remember { FocusRequester() }
@@ -464,8 +465,15 @@ fun QuizScreen(
     val correctAnswer = number1 * number2
 
     fun newQuestion() {
-        number1 = Random.nextInt(1, 10)
-        number2 = Random.nextInt(1, 10)
+        val n1 = selectedNumbers.random()
+        var n2 = Random.nextInt(1, 10)
+        if (Random.nextBoolean()) {
+            number1 = n1
+            number2 = n2
+        } else {
+            number1 = n2
+            number2 = n1
+        }
         userAnswer = ""
         resultState = null
         selectionResults = emptyMap()
@@ -577,6 +585,29 @@ fun QuizScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                (1..9).forEach { number ->
+                    val isSelected = selectedNumbers.contains(number)
+                    TextButton(
+                        onClick = {
+                            selectedNumbers = if (isSelected) {
+                                if (selectedNumbers.size > 1) selectedNumbers.minus(number) else selectedNumbers
+                            } else {
+                                selectedNumbers.plus(number)
+                            }
+                        },
+                        modifier = Modifier.size(36.dp),
+                        colors = ButtonDefaults.textButtonColors(
+                            containerColor = if (isSelected) Color.Blue.copy(alpha = 0.5f) else Color.Gray.copy(alpha = 0.2f)
+                        )
+                    ) {
+                        Text(text = "$number", fontSize = 18.sp, color = if (isSelected) Color.White else Color.Black)
+                    }
+                    Spacer(modifier = Modifier.width(2.dp))
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+
             if (isSelectionMode) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Row(
