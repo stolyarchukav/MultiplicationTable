@@ -38,4 +38,5 @@
     <string name="percentage_format">"%.0f%%"</string>
     <string name="heat_map">히트맵</string>
     <string name="hint">힌트</string>
+    <string name="train_the_following_numbers">다음 숫자를 연습하세요</string>
 </resources>

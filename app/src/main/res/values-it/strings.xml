@@ -38,4 +38,5 @@
     <string name="percentage_format">"%.0f%%"</string>
     <string name="heat_map">Mappa di calore</string>
     <string name="hint">Suggerimento</string>
+    <string name="train_the_following_numbers">Allena i seguenti numeri</string>
 </resources>
