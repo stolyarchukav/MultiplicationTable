@@ -39,4 +39,6 @@
     <string name="heat_map">ヒートマップ</string>
     <string name="hint">ヒント</string>
     <string name="train_the_following_numbers">次の数字を練習する</string>
+    <string name="rate_app">アプリを評価</string>
+    <string name="more_apps">他のアプリ</string>
 </resources>

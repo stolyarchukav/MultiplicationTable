@@ -39,4 +39,6 @@
     <string name="heat_map">Mapa de calor</string>
     <string name="hint">Pista</string>
     <string name="train_the_following_numbers">Entrena los siguientes números</string>
+    <string name="rate_app">Calificar aplicación</string>
+    <string name="more_apps">Más aplicaciones</string>
 </resources>

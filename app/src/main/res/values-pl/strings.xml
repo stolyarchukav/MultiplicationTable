@@ -39,4 +39,6 @@
     <string name="heat_map">Mapa cieplna</string>
     <string name="hint">Wskazówka</string>
     <string name="train_the_following_numbers">Trenuj następujące liczby</string>
+    <string name="rate_app">Oceń aplikację</string>
+    <string name="more_apps">Więcej aplikacji</string>
 </resources>

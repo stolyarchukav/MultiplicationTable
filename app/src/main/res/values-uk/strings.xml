@@ -39,4 +39,6 @@
     <string name="heat_map">Теплова карта</string>
     <string name="hint">Підказка</string>
     <string name="train_the_following_numbers">Тренувати наступні числа</string>
+    <string name="rate_app">Оцінити додаток</string>
+    <string name="more_apps">Інші додатки</string>
 </resources>

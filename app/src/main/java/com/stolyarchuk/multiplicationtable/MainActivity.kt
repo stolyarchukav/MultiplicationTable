@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -59,12 +60,17 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
@@ -432,6 +438,52 @@ fun MultiplicationTableScreen(
                         fontWeight = FontWeight.Normal
                     )
                 }
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            val uriHandler = LocalUriHandler.current
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val rateAppText = buildAnnotatedString {
+                    pushStringAnnotation(tag = "URL", annotation = "https://play.google.com/store/apps/details?id=com.stolyarchuk.multiplicationtable")
+                    withStyle(style = SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)) {
+                        append(stringResource(R.string.rate_app))
+                    }
+                    pop()
+                }
+
+                ClickableText(
+                    text = rateAppText,
+                    onClick = { offset ->
+                        rateAppText.getStringAnnotations(tag = "URL", start = offset, end = offset)
+                            .firstOrNull()?.let { annotation ->
+                                uriHandler.openUri(annotation.item)
+                            }
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                val moreAppsText = buildAnnotatedString {
+                    pushStringAnnotation(tag = "URL", annotation = "https://play.google.com/store/search?q=pub:ForzaVerita")
+                    withStyle(style = SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)) {
+                        append(stringResource(R.string.more_apps))
+                    }
+                    pop()
+                }
+
+                ClickableText(
+                    text = moreAppsText,
+                    onClick = { offset ->
+                        moreAppsText.getStringAnnotations(tag = "URL", start = offset, end = offset)
+                            .firstOrNull()?.let { annotation ->
+                                uriHandler.openUri(annotation.item)
+                            }
+                    }
+                )
             }
         }
     }

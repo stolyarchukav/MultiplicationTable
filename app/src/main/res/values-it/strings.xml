@@ -39,4 +39,6 @@
     <string name="heat_map">Mappa di calore</string>
     <string name="hint">Suggerimento</string>
     <string name="train_the_following_numbers">Allena i seguenti numeri</string>
+    <string name="rate_app">Valuta l\'app</string>
+    <string name="more_apps">Altre app</string>
 </resources>

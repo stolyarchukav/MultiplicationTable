@@ -39,4 +39,6 @@
     <string name="heat_map">Мапа топлоте</string>
     <string name="hint">Савет</string>
     <string name="train_the_following_numbers">Тренирај следеће бројеве</string>
+    <string name="rate_app">Оцените апликацију</string>
+    <string name="more_apps">Још апликација</string>
 </resources>

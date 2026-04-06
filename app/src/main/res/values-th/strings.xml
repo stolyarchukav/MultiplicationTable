@@ -39,4 +39,6 @@
     <string name="heat_map">แผนที่ความร้อน</string>
     <string name="hint">คำใบ้</string>
     <string name="train_the_following_numbers">ฝึกฝนตัวเลขต่อไปนี้</string>
+    <string name="rate_app">ให้คะแนนแอป</string>
+    <string name="more_apps">แอปอื่นๆ</string>
 </resources>

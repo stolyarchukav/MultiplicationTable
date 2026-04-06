@@ -39,4 +39,6 @@
     <string name="heat_map">हीट मैप</string>
     <string name="hint">संकेत</string>
     <string name="train_the_following_numbers">निम्नलिखित संख्याओं का अभ्यास करें</string>
+    <string name="rate_app">ऐप को रेट करें</string>
+    <string name="more_apps">अधिक ऐप</string>
 </resources>
