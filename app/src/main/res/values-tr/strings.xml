@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">Çarpım Tablosu</string>
+    <string name="multiplication_table_title">Çarpım Tablosu</string>
+    <string name="table">Tablo</string>
+    <string name="quiz">Pratik</string>
+    <string name="statistics">İstatistikler</string>
+    <string name="click_the_table_cell">Tablo hücresine tıkla</string>
+    <string name="multiply">Çarp</string>
+    <string name="back_to_table">Tabloya Dön</string>
+    <string name="correct">"Doğru: "</string>
+    <string name="wrong">"Yanlış: "</string>
+    <string name="go_to_statistics">İstatistiklere Git</string>
+    <string name="average_answer_time_formatted">"Ortalama Cevap Süresi: %.1fs"</string>
+    <string name="switch_to_input_mode">Giriş Moduna Geç</string>
+    <string name="switch_to_selection_mode">Seçim Moduna Geç</string>
+    <string name="check">Kontrol Et</string>
+    <string name="toggle_view">Görünümü Değiştir</string>
+    <string name="reset_stats">İstatistikleri Sıfırla</string>
+    <string name="confirm_reset">Sıfırlamayı Onayla</string>
+    <string name="are_you_sure_reset">Tüm istatistikleri sıfırlamak istediğinizden emin misiniz?</string>
+    <string name="yes">Evet</string>
+    <string name="no">Hayır</string>
+    <string name="daily_input_mode">Günlük Giriş Modu</string>
+    <string name="correct_vs_wrong_answers">Doğru ve Yanlış Cevaplar</string>
+    <string name="average_answer_time_sec">Ortalama Cevap Süresi, sn</string>
+    <string name="daily_selection_mode">Günlük Seçim Modu</string>
+    <string name="input_mode">Giriş Modu</string>
+    <string name="selection_mode">Seçim Modu</string>
+    <string name="correct_answers">"Doğru Cevaplar:"</string>
+    <string name="wrong_answers">"Yanlış Cevaplar:"</string>
+    <string name="average_answer_time_label">"Ortalama Cevap Süresi:"</string>
+    <string name="no_data_yet">"%s: Henüz veri yok"</string>
+    <string name="equals_question">" = ?"</string>
+    <string name="equals_sign">" = "</string>
+    <string name="seconds_format">"%.1fs"</string>
+    <string name="answers_per_number">Sayı Başına Cevaplar</string>
+    <string name="correct_percentage">"Doğru (%)"</string>
+    <string name="percentage_format">"%.0f%%"</string>
+    <string name="heat_map">Isı haritası</string>
+    <string name="hint">İpucu</string>
+    <string name="train_the_following_numbers">Şu sayıları çalıştırın</string>
+</resources>

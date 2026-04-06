@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">Bảng cửu chương</string>
+    <string name="multiplication_table_title">Bảng cửu chương</string>
+    <string name="table">Bảng</string>
+    <string name="quiz">Thực hành</string>
+    <string name="statistics">Thống kê</string>
+    <string name="click_the_table_cell">Nhấp vào ô trong bảng</string>
+    <string name="multiply">Nhân</string>
+    <string name="back_to_table">Quay lại bảng</string>
+    <string name="correct">"Đúng: "</string>
+    <string name="wrong">"Sai: "</string>
+    <string name="go_to_statistics">Đi tới Thống kê</string>
+    <string name="average_answer_time_formatted">"Thời gian trả lời trung bình: %.1fs"</string>
+    <string name="switch_to_input_mode">Chuyển sang chế độ nhập</string>
+    <string name="switch_to_selection_mode">Chuyển sang chế độ chọn</string>
+    <string name="check">Kiểm tra</string>
+    <string name="toggle_view">Chuyển đổi chế độ xem</string>
+    <string name="reset_stats">Đặt lại thống kê</string>
+    <string name="confirm_reset">Xác nhận đặt lại</string>
+    <string name="are_you_sure_reset">Bạn có chắc chắn muốn đặt lại tất cả thống kê không?</string>
+    <string name="yes">Có</string>
+    <string name="no">Không</string>
+    <string name="daily_input_mode">Chế độ nhập hàng ngày</string>
+    <string name="correct_vs_wrong_answers">Câu trả lời Đúng và Sai</string>
+    <string name="average_answer_time_sec">Thời gian trả lời trung bình, giây</string>
+    <string name="daily_selection_mode">Chế độ chọn hàng ngày</string>
+    <string name="input_mode">Chế độ nhập</string>
+    <string name="selection_mode">Chế độ chọn</string>
+    <string name="correct_answers">"Câu trả lời đúng:"</string>
+    <string name="wrong_answers">"Câu trả lời sai:"</string>
+    <string name="average_answer_time_label">"Thời gian trả lời trung bình:"</string>
+    <string name="no_data_yet">"%s: Chưa có dữ liệu"</string>
+    <string name="equals_question">" = ?"</string>
+    <string name="equals_sign">" = "</string>
+    <string name="seconds_format">"%.1fs"</string>
+    <string name="answers_per_number">Câu trả lời cho mỗi số</string>
+    <string name="correct_percentage">"Đúng (%)"</string>
+    <string name="percentage_format">"%.0f%%"</string>
+    <string name="heat_map">Biểu đồ nhiệt</string>
+    <string name="hint">Gợi ý</string>
+    <string name="train_the_following_numbers">Luyện tập các số sau</string>
+</resources>

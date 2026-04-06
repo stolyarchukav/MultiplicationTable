@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">Таблиця множення</string>
+    <string name="multiplication_table_title">Таблиця множення</string>
+    <string name="table">Таблиця</string>
+    <string name="quiz">Практика</string>
+    <string name="statistics">Статистика</string>
+    <string name="click_the_table_cell">Натисніть на комірку таблиці</string>
+    <string name="multiply">Помножити</string>
+    <string name="back_to_table">Назад до таблиці</string>
+    <string name="correct">"Правильно: "</string>
+    <string name="wrong">"Неправильно: "</string>
+    <string name="go_to_statistics">Перейти до статистики</string>
+    <string name="average_answer_time_formatted">"Середній час відповіді: %.1fs"</string>
+    <string name="switch_to_input_mode">Переключитися в режим введення</string>
+    <string name="switch_to_selection_mode">Переключитися в режим вибору</string>
+    <string name="check">Перевірити</string>
+    <string name="toggle_view">Переключити вигляд</string>
+    <string name="reset_stats">Скинути статистику</string>
+    <string name="confirm_reset">Підтвердьте скидання</string>
+    <string name="are_you_sure_reset">Ви впевнені, що хочете скинути всю статистику?</string>
+    <string name="yes">Так</string>
+    <string name="no">Ні</string>
+    <string name="daily_input_mode">Щоденний режим введення</string>
+    <string name="correct_vs_wrong_answers">Правильні та неправильні відповіді</string>
+    <string name="average_answer_time_sec">Середній час відповіді, сек</string>
+    <string name="daily_selection_mode">Щоденний режим вибору</string>
+    <string name="input_mode">Режим введення</string>
+    <string name="selection_mode">Режим вибору</string>
+    <string name="correct_answers">"Правильні відповіді:"</string>
+    <string name="wrong_answers">"Неправильні відповіді:"</string>
+    <string name="average_answer_time_label">"Середній час відповіді:"</string>
+    <string name="no_data_yet">"%s: Ще немає даних"</string>
+    <string name="equals_question">" = ?"</string>
+    <string name="equals_sign">" = "</string>
+    <string name="seconds_format">"%.1fs"</string>
+    <string name="answers_per_number">Відповіді по числах</string>
+    <string name="correct_percentage">"Правильно (%)"</string>
+    <string name="percentage_format">"%.0f%%"</string>
+    <string name="heat_map">Теплова карта</string>
+    <string name="hint">Підказка</string>
+    <string name="train_the_following_numbers">Тренувати наступні числа</string>
+</resources>

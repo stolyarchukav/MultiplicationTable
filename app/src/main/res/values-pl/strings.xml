@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">Tabliczka mnożenia</string>
+    <string name="multiplication_table_title">Tabliczka mnożenia</string>
+    <string name="table">Tabela</string>
+    <string name="quiz">Praktyka</string>
+    <string name="statistics">Statystyki</string>
+    <string name="click_the_table_cell">Kliknij komórkę tabeli</string>
+    <string name="multiply">Pomnóż</string>
+    <string name="back_to_table">Powrót do tabeli</string>
+    <string name="correct">"Poprawnie: "</string>
+    <string name="wrong">"Błędnie: "</string>
+    <string name="go_to_statistics">Idź do statystyk</string>
+    <string name="average_answer_time_formatted">"Średni czas odpowiedzi: %.1fs"</string>
+    <string name="switch_to_input_mode">Przełącz na tryb wpisywania</string>
+    <string name="switch_to_selection_mode">Przełącz na tryb wyboru</string>
+    <string name="check">Sprawdź</string>
+    <string name="toggle_view">Przełącz widok</string>
+    <string name="reset_stats">Resetuj statystyki</string>
+    <string name="confirm_reset">Potwierdź resetowanie</string>
+    <string name="are_you_sure_reset">Czy na pewno chcesz zresetować wszystkie statystyki?</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="daily_input_mode">Dzienny tryb wpisywania</string>
+    <string name="correct_vs_wrong_answers">Poprawne vs błędne odpowiedzi</string>
+    <string name="average_answer_time_sec">Średni czas odpowiedzi, sek</string>
+    <string name="daily_selection_mode">Dzienny tryb wyboru</string>
+    <string name="input_mode">Tryb wpisywania</string>
+    <string name="selection_mode">Tryb wyboru</string>
+    <string name="correct_answers">"Poprawne odpowiedzi:"</string>
+    <string name="wrong_answers">"Błędne odpowiedzi:"</string>
+    <string name="average_answer_time_label">"Średni czas odpowiedzi:"</string>
+    <string name="no_data_yet">"%s: Brak danych"</string>
+    <string name="equals_question">" = ?"</string>
+    <string name="equals_sign">" = "</string>
+    <string name="seconds_format">"%.1fs"</string>
+    <string name="answers_per_number">Odpowiedzi na liczbę</string>
+    <string name="correct_percentage">"Poprawnie (%)"</string>
+    <string name="percentage_format">"%.0f%%"</string>
+    <string name="heat_map">Mapa cieplna</string>
+    <string name="hint">Wskazówka</string>
+    <string name="train_the_following_numbers">Trenuj następujące liczby</string>
+</resources>

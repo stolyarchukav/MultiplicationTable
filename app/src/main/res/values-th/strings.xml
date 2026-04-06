@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">ตารางสูตรคูณ</string>
+    <string name="multiplication_table_title">ตารางสูตรคูณ</string>
+    <string name="table">ตาราง</string>
+    <string name="quiz">ฝึกฝน</string>
+    <string name="statistics">สถิติ</string>
+    <string name="click_the_table_cell">คลิกที่เซลล์ตาราง</string>
+    <string name="multiply">คูณ</string>
+    <string name="back_to_table">กลับไปที่ตาราง</string>
+    <string name="correct">"ถูกต้อง: "</string>
+    <string name="wrong">"ผิด: "</string>
+    <string name="go_to_statistics">ไปที่สถิติ</string>
+    <string name="average_answer_time_formatted">"เวลาตอบเฉลี่ย: %.1fs"</string>
+    <string name="switch_to_input_mode">สลับเป็นโหมดพิมพ์</string>
+    <string name="switch_to_selection_mode">สลับเป็นโหมดเลือก</string>
+    <string name="check">ตรวจสอบ</string>
+    <string name="toggle_view">สลับมุมมอง</string>
+    <string name="reset_stats">รีเซ็ตสถิติ</string>
+    <string name="confirm_reset">ยืนยันการรีเซ็ต</string>
+    <string name="are_you_sure_reset">คุณแน่ใจหรือไม่ว่าต้องการรีเซ็ตสถิติทั้งหมด?</string>
+    <string name="yes">ใช่</string>
+    <string name="no">ไม่</string>
+    <string name="daily_input_mode">โหมดพิมพ์รายวัน</string>
+    <string name="correct_vs_wrong_answers">คำตอบที่ถูกเทียบกับผิด</string>
+    <string name="average_answer_time_sec">เวลาตอบเฉลี่ย (วินาที)</string>
+    <string name="daily_selection_mode">โหมดเลือกรายวัน</string>
+    <string name="input_mode">โหมดพิมพ์</string>
+    <string name="selection_mode">โหมดเลือก</string>
+    <string name="correct_answers">"คำตอบที่ถูก:"</string>
+    <string name="wrong_answers">"คำตอบที่ผิด:"</string>
+    <string name="average_answer_time_label">"เวลาตอบเฉลี่ย:"</string>
+    <string name="no_data_yet">"%s: ยังไม่มีข้อมูล"</string>
+    <string name="equals_question">" = ?"</string>
+    <string name="equals_sign">" = "</string>
+    <string name="seconds_format">"%.1fs"</string>
+    <string name="answers_per_number">คำตอบต่อตัวเลข</string>
+    <string name="correct_percentage">"ถูกต้อง (%)"</string>
+    <string name="percentage_format">"%.0f%%"</string>
+    <string name="heat_map">แผนที่ความร้อน</string>
+    <string name="hint">คำใบ้</string>
+    <string name="train_the_following_numbers">ฝึกฝนตัวเลขต่อไปนี้</string>
+</resources>
